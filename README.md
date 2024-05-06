@@ -61,17 +61,16 @@ This also stacks the labels.csv and groups.csv files, and compresses the folder 
 **2.Train the deep learning algorithm.** We train five neural networks on each training set and report the performance of the model averaged over them. To train a single neural network of a index kk, run
 
 ```python
-./dl_model/DL_training_fold_white.py $kk
-./dl_model/DL_training_hopf_white.py $kk
-./dl_model/DL_training_branch_white.py $kk
-./dl_model/DL_training_fold_red.py $kk
-./dl_model/DL_training_hopf_red.py $kk
-./dl_model/DL_training_branch_red.py $kk
+python ./dl_model/DL_training_fold_white.py $kk
+python ./dl_model/DL_training_hopf_white.py $kk
+python ./dl_model/DL_training_branch_white.py $kk
+python ./dl_model/DL_training_fold_red.py $kk
+python ./dl_model/DL_training_hopf_red.py $kk
+python ./dl_model/DL_training_branch_red.py $kk
 ```
 
-This will export the trained model (including weights, biases and architecture) to the directory ./dl_train/. We run this for kk in [1,2,...,5]. Taking kk as command line parameters allows training of multiple neural networks in parallel if one has access to mulitple CPUs. Time to train a single neural network using a CPU is approx. 72 hours.
+This will export the trained model (including weights, biases and architecture) to the directory ./dl_model/. We run this for kk in [1,2,...,5]. Taking kk as command line parameters allows training of multiple neural networks in parallel if one has access to mulitple CPUs. Time to train a single neural network using a CPU is approx. 72 hours. The same process can be used to train both the null model and the combined model as comparisons for the deep learning algorithm in manuscript, with the corresponding code located in the directory ./dl_null_model/ and ./dl_combined_model/ respectively.
  
-**3.Train the null model and combined model.** 
 
 
 
