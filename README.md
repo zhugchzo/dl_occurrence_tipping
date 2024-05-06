@@ -58,8 +58,20 @@ sbatch gen_train_set/combine_batches_reverse.slurm
 
 This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at GB with increasing bifurcation parameter and GB with decreasing bifurcation parameter. Training datasets we used in manuscript are archived on Zenodo at https://.
 
-**2.Train the deep learning algorithm.** 
+**2.Train the deep learning algorithm.** We train five neural networks on each training set and report the performance of the model averaged over them. To train a single neural network of a index kk, run
 
+```python
+./dl_model/DL_training_fold_white.py $kk
+./dl_model/DL_training_hopf_white.py $kk
+./dl_model/DL_training_branch_white.py $kk
+./dl_model/DL_training_fold_red.py $kk
+./dl_model/DL_training_hopf_red.py $kk
+./dl_model/DL_training_branch_red.py $kk
+```
+
+This will export the trained model (including weights, biases and architecture) to the directory ./dl_train/. We run this for kk in [1,2,...,5]. Taking kk as command line parameters allows training of multiple neural networks in parallel if one has access to mulitple CPUs. Time to train a single neural network using a CPU is approx. 72 hours.
+ 
+**3.Train the null model and combined model.** 
 
 
 
