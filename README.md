@@ -8,7 +8,7 @@ This is the code repository to accompnay the article:
 
 Python 3.7 is required. To install python package dependencies, use the command
 
-```
+``` setup
 pip install -r requirements.txt
 ```
 
@@ -40,26 +40,25 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 The results in the paper are obtained from the following workflow:
 
-## 1.Generate the training data. 
-We generate six sets of training data categorized by three bifurcation types and two noise types for six deep learning models. Each deep learning model is trained on 200,000 time series (100,000 time series with bifurcation parameter increasing and 100,000 time series with bifurcation parameter decreasing) with length of 500 data points. Run
+**1.Generate the training data.** We generate six sets of training data categorized by three bifurcation types and two noise types for six deep learning models. Each deep learning model is trained on 200,000 time series (100,000 time series with bifurcation parameter increasing and 100,000 time series with bifurcation parameter decreasing) with length of 500 data points. Run
 
-```
-sbatch run_batches_forward.slurm
-sbatch run_batches_reverse.slurm
+```bash
+sbatch gen_train_set/run_batches_forward.slurm
+sbatch gen_train_set/run_batches_reverse.slurm
 ```
 
 where the former is used to generate time series with increasing bifurcation parameter, while the latter is used to generate time series with decreasing bifurcation parameter. We run 50 batches in parallel for both of them on a CPU cluster at the Beihang University. One batch generates 12000 time series, consisting of 2000 time series for each bifurcation type and noise type (fold-white, Hopf-white, transcritical-white, fold-red, Hopf-red, transcritical-red). Each time series is saved as a csv file. A total of 1,200,000 (2x50x12000) time series are generated for training six deep learning models.
 
 Once every batch has been generated, the output data from each batch is combined using
 
-```
-sbatch combine_batches_forward.slurm
-sbatch combine_batches_reverse.slurm
+```bash
+sbatch gen_train_set/combine_batches_forward.slurm
+sbatch gen_train_set/combine_batches_reverse.slurm
 ```
 
 This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at GB with increasing bifurcation parameter and GB with decreasing bifurcation parameter. Training datasets we used in manuscript are archived on Zenodo at https://.
 
-## 2.Train the deep learning algorithm.
+**2.Train the deep learning algorithm.** 
 
 
 
