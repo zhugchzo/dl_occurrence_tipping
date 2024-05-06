@@ -40,7 +40,7 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 The results in the paper are obtained from the following workflow:
 
-## Generate the training data. 
+## 1.Generate the training data. 
 We generate six sets of training data categorized by three bifurcation types and two noise types for six deep learning models. Each deep learning model is trained on 200,000 time series (100,000 time series with bifurcation parameter increasing and 100,000 time series with bifurcation parameter decreasing) with length of 500 data points. Run
 
 ```
@@ -59,7 +59,7 @@ sbatch combine_batches_reverse.slurm
 
 This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at GB with increasing bifurcation parameter and GB with decreasing bifurcation parameter. Training datasets we used in manuscript are archived on Zenodo at https://.
 
-## Train the deep learning algorithm.
+## 2.Train the deep learning algorithm.
 
 
 
