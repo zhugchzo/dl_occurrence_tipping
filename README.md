@@ -16,8 +16,8 @@ within a new virtual environment.
 
 The bifurcation continuation software AUTO-07P is required. Installation instructions are provided at http://www.macs.hw.ac.uk/~gabriel/auto07/auto.html
 
-
 # Directories
+
 **./dl_model:** Code to train the deep learning algorithm. And trained deep learning models used in manuscript.
 
 **./dl_null_model:** Code to train the null model. And trained null models used in manuscript.
@@ -34,4 +34,38 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 **./draw_fig:** Code to generate figures used in manuscript.
 
-**./figure:** Figures used in manuscript.
+**./figures:** Figures used in manuscript.
+
+# Workflow
+
+The results in the paper are obtained from the following workflow:
+
+**1.Generate the training data.** We generate six sets of training data categorized by three bifurcation types and two noise types for six deep learning models. Each deep learning model is trained on 200,000 time series (100,000 bifurcation parameter increasing and 100,000 bifurcation parameter decreasing) with length of 500 data points. Run
+
+```
+sbatch run_batches_forward.slurm
+sbatch run_batches_reverse.slurm
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
