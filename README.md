@@ -90,7 +90,9 @@ The same file notation is used for the Sprott B hysteresis bursting model. These
 
 **4.Process empirical data.** Scripts to process the empirical data (including irregular sampling and computing residuals) are availalble in the directory ./empirical_test/sim_data_nus.
 
-**5.Generate predictions by deep learning models.** For predictions of model time series, we feed the residual data into the neural networks to make predictions. The code to test on regularly-sampled model time series and irregularly-sampled model time series are availalble in the directory ./model_test/test_data_us/ and /model_test/test_data_nus/ respectively. For example, to apply the deep learning algorithm on regularly-sampled time series generated from May's harvesting model with 11 different initial values of the bifurcation parameter, run
+**5.Generate predictions by deep learning models.** Before we feed the residual and parameter data into the neural networks to make predictions, there are two preprocessing matters. First, we pad both residual and parameter series are padded on the left by zeroes to a length of 500. Second,  each residual time series is normalized by dividing each time series data point by the average absolute value of the residuals across the entire time series. In addition, each parameter time series is also normalized: each data point in the time series is subtracted by the initial value of the parameter series, and then divided by the distance between the initial and final values of the parameter series. These two preprocessing matters are also performed for training data before they are fed into the neural networks in the **Generate the training data**.
+
+For predictions of model time series, the code to test on regularly-sampled model time series and irregularly-sampled model time series are availalble in the directory ./model_test/test_data_us/ and /model_test/test_data_nus/ respectively. For example, to apply the deep learning algorithm on regularly-sampled time series generated from May's harvesting model with 11 different initial values of the bifurcation parameter, run
 
 ```python
 python ./model_test/test_data_us/may_fold.py
@@ -104,7 +106,7 @@ python ./model_test/test_data_nus/may_fold.py
 
 The code for generating predictions by null model and combined model is also included in `test_data_nus/may_fold.py`. The same file notation is used for the time series generated from other models.
 
-For predictions of empirical time series, the code to test on all irregularly-sampled empirical time series used in manuscript is availalble in `./empirical_test/test_empirical_data/empirical_sum.py`.
+For predictions of empirical time series, the code to test on all irregularly-sampled empirical time series used in manuscript is availalble in `./empirical_test/test_empirical_data/empirical_sum.py`. **If using your own data, it is important to detrend it using a Lowess filter with span 0.20 and perform the two preprocessing matters mentioned above.**
 
 
 
