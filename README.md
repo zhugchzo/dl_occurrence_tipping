@@ -104,6 +104,8 @@ python ./model_test/test_data_nus/may_fold.py
 
 The code for generating predictions by null model and combined model is also included in `test_data_nus/may_fold.py`. The same file notation is used for the time series generated from other models.
 
+For predictions of empirical time series, the code to test on all irregularly-sampled empirical time series used in manuscript is availalble in `./empirical_test/test_empirical_data/empirical_sum.py`.
+
 
 
 
