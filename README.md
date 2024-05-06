@@ -74,6 +74,20 @@ python ./model_test/sim_data/sim_may_fold.py
 
 The same file notation is used for the other models except sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. These scripts also detrend the time series to get residuals, and compute indicators of competing algorithms in the regularly-sampled situation.
 
+Simulate the model time series with hysteresis phenomenon, code to do this is available in ./model_test/sim_hysteresis/. For example, to simulate trajectories of sleep-wake hysteresis loop model, run 
+
+```python
+python ./model_test/sim_hysteresis/sim_sleep-wake_original_series.py
+```
+
+, then perform irregular sampling for the trajectories, run
+
+```python
+python ./model_test/sim_hysteresis/sim_sleep-wake.py
+```
+
+The same file notation is used for the Sprott B hysteresis bursting model.
+
 
 
 
