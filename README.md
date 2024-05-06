@@ -1,5 +1,4 @@
 # Deep learning for the occurrence of tipping points
-Repository to accompany the article "Deep learning for the occurrence of tipping points"
 
 This is the code repository to accompnay the article:
 
@@ -9,7 +8,7 @@ This is the code repository to accompnay the article:
 
 Python 3.7 is required. To install python package dependencies, use the command
 
-`pip install -r requirements.txt`
+```pip install -r requirements.txt
 
 within a new virtual environment.
 
