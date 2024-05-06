@@ -86,7 +86,26 @@ python ./model_test/sim_hysteresis/sim_sleep-wake_original_series.py
 python ./model_test/sim_hysteresis/sim_sleep-wake.py
 ```
 
-The same file notation is used for the Sprott B hysteresis bursting model.
+The same file notation is used for the Sprott B hysteresis bursting model. These scripts also detrend the time series to get residuals.
+
+**4.Process empirical data.** Scripts to process the empirical data (including irregular sampling and computing residuals) are availalble in the directory ./empirical_test/sim_data_nus.
+
+**5.Generate predictions by deep learning models.** For predictions of model time series, we feed the residual data into the neural networks to make predictions. The code to test on regularly-sampled model time series and irregularly-sampled model time series are availalble in the directory ./model_test/test_data_us/ and /model_test/test_data_nus/ respectively. For example, to apply the deep learning algorithm on regularly-sampled time series generated from May's harvesting model with 11 different initial values of the bifurcation parameter, run
+
+```python
+python ./model_test/test_data_us/may_fold.py
+```
+
+The code for generating predictions using competing algorithms is also included in `test_data_us/may_fold.py`. The same file notation is used for the time series generated from other models. Furthermore, in the situation of irregularly-sampled time series generated from May's harvesting model, run
+
+```python
+python ./model_test/test_data_nus/may_fold.py
+```
+
+The code for generating predictions by null model and combined model is also included in `test_data_nus/may_fold.py`. The same file notation is used for the time series generated from other models.
+
+
+
 
 
 
