@@ -80,7 +80,7 @@ The results in the paper are obtained from the following workflow:
    python ./model_test/sim_hysteresis/sim_sleep-wake_original_series.py
    ```
 
-   , then perform irregular sampling for the trajectories, run
+   then perform irregular sampling for the trajectories, run
 
    ```python
    python ./model_test/sim_hysteresis/sim_sleep-wake.py
@@ -88,7 +88,7 @@ The results in the paper are obtained from the following workflow:
 
    The same file notation is used for the Sprott B hysteresis bursting model. These scripts also detrend the time series to get residuals.
 
-4. **Process empirical data.** Scripts to process the empirical data (including irregular sampling and computing residuals) are availalble in the directory `./empirical_test/sim_data_nus`.
+4. **Process empirical data.** Scripts to process the empirical data (including irregular sampling and computing residuals) are availalble in the directory `./empirical_test/sim_data_nus/`.
 
 5. **Generate predictions by deep learning models.** Before we feed the residual and parameter data into the neural networks to make predictions, there are two preprocessing matters. First, we pad both residual and parameter series are padded on the left by zeroes to a length of 500. Second,  each residual time series is normalized by dividing each time series data point by the average absolute value of the residuals across the entire time series. In addition, each parameter time series is also normalized: each data point in the time series is subtracted by the initial value of the parameter series, and then divided by the distance between the initial and final values of the parameter series. These two preprocessing matters are also performed for training data before they are fed into the neural networks in the **Generate the training data**.
 
@@ -112,7 +112,7 @@ The results in the paper are obtained from the following workflow:
    python ./empirical_test/test_empirical_data/empirical_sum.py
    ```
 
-   **If using your own data, it is important to detrend it using a Lowess filter with span 0.20 and perform the two preprocessing matters mentioned above.**
+   The results of predictions will be exported to the directory `./results/`. **If using your own data, it is important to detrend it using a Lowess filter with span 0.20 and perform the two preprocessing matters mentioned above.**
 
 # Data sources
 
