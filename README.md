@@ -118,7 +118,7 @@ The results in the paper are obtained from the following workflow:
 
 The empirical data used in this study are available from the following sources:
 
-1. **cyanobacterial population collapse** data is availalble in the text file `./empirical_test/empirical_data/microcosm.txt`. Data was collected by AJ Veraart et al. and was first published in [Veraart A J, Faassen E J, Dakos V, et al. Recovery rates reflect distance to a tipping point in a living system[J]. Nature, 2012, 481(7381): 357-359.](https://www.nature.com/articles/nature10723)
+1. **Cyanobacterial population collapse** data is availalble in the text file `./empirical_test/empirical_data/microcosm.txt`. Data was collected by AJ Veraart et al. and was first published in [Veraart A J, Faassen E J, Dakos V, et al. Recovery rates reflect distance to a tipping point in a living system[J]. Nature, 2012, 481(7381): 357-359.](https://www.nature.com/articles/nature10723)
 
 2. **Thermoacoustic instability** data is availalble in the text files `./empirical_test/empirical_data/thermoacoustic_20mv.txt`, `./empirical_test/empirical_data/thermoacoustic_40mv.txt` and `./empirical_test/empirical_data/thermoacoustic_60mv.txt`. Data was collected by Induja Pavithran and R. I. Sujith and was first published in [Pavithran I, Sujith R I. Effect of rate of change of parameter on early warning signals for critical transitions[J]. Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, 31(1).](https://pubs.aip.org/aip/cha/article-abstract/31/1/013116/1059628/Effect-of-rate-of-change-of-parameter-on-early?redirectedFrom=fulltext)
 
