@@ -124,6 +124,10 @@ The empirical data used in this study are available from the following sources:
 
 3. **Sedimentary archive** data is availalble in the text files `./empirical_test/empirical_data/hypoxia_64PE_Mo_fold.txt` and `./empirical_test/empirical_data/hypoxia_64PE_U_branch.txt`. Data was collected from the Mediterranean Sea and is available at the [PANGAEA](https://doi.pangaea.de/10.1594/PANGAEA.923197) data repository.
 
+## Acknowledgements
+
+We would like to thank Thomas M. Bury et al. for the inspiration their previous work [Bury T M, Sujith R I, Pavithran I, et al. Deep learning for early warning signals of tipping points[J]. Proceedings of the National Academy of Sciences, 2021, 118(39): e2106140118.](https://www.pnas.org/doi/abs/10.1073/pnas.2106140118) provided to this project.
+
 
 
 
