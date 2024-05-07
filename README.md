@@ -56,7 +56,7 @@ The results in the paper are obtained from the following workflow:
    sbatch gen_train_set/combine_batches_reverse.slurm
     ```
 
-    This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at GB with increasing bifurcation parameter and GB with decreasing bifurcation parameter. Training datasets we used in manuscript are archived on Zenodo at https://.
+    This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at 11.48GB. Training datasets we used in manuscript are archived on Zenodo at https://.
 
 2. **Train the deep learning algorithm.** We train five neural networks on each training set and report the performance of the model averaged over them. For example, to train a single neural network on the fold-white training set of a index kk, run
 
