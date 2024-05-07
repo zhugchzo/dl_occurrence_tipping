@@ -47,7 +47,7 @@ The results in the paper are obtained from the following workflow:
    sbatch gen_train_set/run_batches_reverse.slurm
    ```
 
-   where the former is used to generate time series with increasing bifurcation parameter, while the latter is used to generate time series with decreasing bifurcation parameter. We run 50 batches in parallel for both of them on a CPU cluster at the Beihang University. One batch generates 12000 time series, consisting of 2000 time series for each bifurcation type and noise type (fold-white, Hopf-white, transcritical-white, fold-red, Hopf-red, transcritical-red). Each time series is saved as a csv file. A total of 1,200,000 (2x50x12000) time series are generated for training six deep learning models.
+   where the former is used to generate time series with increasing bifurcation parameter, while the latter is used to generate time series with decreasing bifurcation parameter. We run 50 batches in parallel for both of them on a CPU cluster at the Beihang University. This cluster uses the Slurm workload manager. One batch generates 12000 time series, consisting of 2000 time series for each bifurcation type and noise type (fold-white, Hopf-white, transcritical-white, fold-red, Hopf-red, transcritical-red). Each time series is saved as a csv file. A total of 1,200,000 (2x50x12000) time series are generated for training six deep learning models.
 
    Once every batch has been generated, the output data from each batch is combined using
 
