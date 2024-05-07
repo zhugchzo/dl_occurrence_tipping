@@ -122,7 +122,7 @@ The empirical data used in this study are available from the following sources:
 
 2.**Thermoacoustic instability** data is availalble in the text files `./empirical_test/empirical_data/thermoacoustic_20mv.txt`, `./empirical_test/empirical_data/thermoacoustic_40mv.txt` and `./empirical_test/empirical_data/thermoacoustic_60mv.txt`. Data was collected by Induja Pavithran and R. I. Sujith and was first published in [Pavithran I, Sujith R I. Effect of rate of change of parameter on early warning signals for critical transitions[J]. Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, 31(1).](https://pubs.aip.org/aip/cha/article-abstract/31/1/013116/1059628/Effect-of-rate-of-change-of-parameter-on-early?redirectedFrom=fulltext)
 
-3.**Sedimentary archive** data is availalble in the text file `./empirical_test/empirical_data/hypoxia_64PE_Mo_fold.txt` and `./empirical_test/empirical_data/hypoxia_64PE_U_branch.txt`. Data was collected from the Mediterranean Sea and is available at the [PANGAEA](https://doi.pangaea.de/10.1594/PANGAEA.923197) data repository.
+3.**Sedimentary archive** data is availalble in the text files `./empirical_test/empirical_data/hypoxia_64PE_Mo_fold.txt` and `./empirical_test/empirical_data/hypoxia_64PE_U_branch.txt`. Data was collected from the Mediterranean Sea and is available at the [PANGAEA](https://doi.pangaea.de/10.1594/PANGAEA.923197) data repository.
 
 
 
