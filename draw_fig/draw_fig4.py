@@ -1,6 +1,22 @@
-import pandas
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on: March 22, 2024
+
+@author: Zhuge Chengzuo
+
+Draw the predicted results of the sleep-wake model, fold/fold hysteresis loop
+Draw the predicted results of the Sprot B model, hopf/hopf hysteresis bursting
+
+"""
+
+# import python libraries
 import numpy as np
+import pandas as pd
+import math
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+from scipy.interpolate import interp1d
 import os
 
 # Get the absolute path of the current file
@@ -12,250 +28,145 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-seq_len = 500
-font_0 = {'family':'Times New Roman','weight':'bold','size': 12}
-font_1 = {'family':'Times New Roman','weight':'normal','size': 10}
-font = {'family':'Times New Roman','weight':'normal','size': 12}
+plt.figure(figsize=(10,4))
 
-microcosm_par_range_list = ['0-14','1-15','2-16','3-17']
+subplt = plt.subplot(1,2,1)
 
-df = pandas.read_csv('../results/empirical_results.csv')
+df_swf = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_forward.csv')
+df_swr = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_reverse.csv')
+preds_sw = pd.read_csv('../model_results/sleep-wake.csv')
 
-preds_1 = df['preds_1'].values
-preds_20 = df['preds_20'].values
-preds_21 = df['preds_21'].values
-preds_22 = df['preds_22'].values
-preds_3 = df['preds_3'].values
-preds_4 = df['preds_4'].values
+sw_forward_state = df_swf['v']
+sw_forward_parameter = df_swf['D']
+sw_reverse_state = df_swr['v']
+sw_reverse_parameter = df_swr['D']
 
-preds_1 = list(preds_1)
-preds_20 = list(preds_20)
-preds_21 = list(preds_21)
-preds_22 = list(preds_22)
-preds_3 = list(preds_3)
-preds_4 = list(preds_4)
+sw_forward_state = sw_forward_state[::100]
+sw_forward_parameter = sw_forward_parameter[::100]
+sw_reverse_state = sw_reverse_state[::100]
+sw_reverse_parameter = sw_reverse_parameter[::100]
 
-title = ['A1','B1','C1','D1','A2','B2','C2','D2','A3','B3','C3','D3','A4','B4','C4','D4']
+sw_forward_state = sw_forward_state.values
+sw_forward_parameter = sw_forward_parameter.values
+sw_reverse_state = sw_reverse_state.values
+sw_reverse_parameter = sw_reverse_parameter.values
 
-plt.figure(figsize=(12,9))
+sw_forward_parameter_cover = sw_forward_parameter[sw_forward_parameter < 1]
+sw_forward_parameter_bottom = sw_forward_parameter[sw_forward_parameter >= 1]
+sw_reverse_parameter_cover = sw_reverse_parameter[sw_reverse_parameter > 1]
+sw_reverse_parameter_bottom = sw_reverse_parameter[sw_reverse_parameter <= 1]
 
-for p in range(len(microcosm_par_range_list)):
+sw_forward_state_cover = sw_forward_state[:len(sw_forward_parameter_cover)]
+sw_forward_state_bottom = sw_forward_state[len(sw_forward_parameter_cover):]
+sw_reverse_state_cover = sw_reverse_state[:len(sw_reverse_parameter_cover)]
+sw_reverse_state_bottom = sw_reverse_state[len(sw_reverse_parameter_cover):]
 
-    par_range = microcosm_par_range_list[p]
+swf_pred = preds_sw['preds_f'].item()
+swr_pred = preds_sw['preds_r'].item()
 
-    preds = preds_1[p]
+swf_s = preds_sw['f_start'].item()
+swf_o = preds_sw['f_over'].item()
+swr_s = preds_sw['r_start'].item()
+swr_o = preds_sw['r_over'].item()
 
-    txt = open('../empirical_test/empirical_data/microcosm.txt')
-    datalines = txt.readlines()
-    dataset = []
+subplt.scatter(sw_forward_parameter_bottom,sw_forward_state_bottom,c='crimson',s=0.5)
+subplt.scatter(sw_reverse_parameter_bottom,sw_reverse_state_bottom,c='royalblue',s=0.5)
+subplt.scatter(sw_forward_parameter_cover,sw_forward_state_cover,c='crimson',s=0.5)
+subplt.scatter(sw_reverse_parameter_cover,sw_reverse_state_cover,c='royalblue',s=0.5)
 
-    for data in datalines:
-        data = data.strip().split('\t')
-        dataset.append(data)
+subplt.axvline(swf_pred,color='crimson',linestyle='--')
+subplt.axvline(swr_pred,color='royalblue',linestyle='--')
 
-    clean_NA = []
-    for i in range(1,len(dataset)-1):
-        if dataset[i][1] != 'NA' and dataset[i+1][1] == 'NA':
-            clean_NA.append(i)
-        if dataset[i-1][1] == 'NA' and dataset[i][1] != 'NA':
-            clean_NA.append(i)
+for i in np.linspace(swf_s,swf_o,500):
+    plt.axvline(i,color='silver',alpha=0.02)
+for i in np.linspace(swr_s,swr_o,500):
+    plt.axvline(i,color='silver',alpha=0.02)
 
-    for i in range(0,len(clean_NA),2):
-        indexmin = clean_NA[i]
-        indexmax = clean_NA[i+1]
-        NA_approximate = np.linspace(float(dataset[indexmin][1]),float(dataset[indexmax][1]),indexmax-indexmin+1)
-        for j in range(indexmin,indexmax+1):
-            dataset[j][1] = NA_approximate[j-indexmin]
+plt.xticks([swf_s,swf_o,swr_s,swr_o])
+plt.xlabel(r'$D$',fontsize=14)
+plt.ylabel(r'$V_v$',fontsize=14)
 
-    for data in dataset:
-        data[0]=(500+float(data[0])*23)/1000
-        data[1]=float(data[1])
+ax = plt.gca()
 
-    dataset = np.array(dataset)
+ax.annotate('', xy=(swf_o, -7.8), xytext=(swf_s, -7.8), arrowprops=dict(color='black', arrowstyle='->'))
+ax.annotate('', xy=(swr_o, -7.8), xytext=(swr_s, -7.8), arrowprops=dict(color='black', arrowstyle='->'))
 
-    x = dataset[:,0]
-    y = dataset[:,1]
+ax.annotate('', xy=(0.5, -7.15), xytext=(0.3, -7.5), arrowprops=dict(color='crimson', arrowstyle='->'))
+ax.annotate('', xy=(1.6, 1.55), xytext=(1.8,1.85), arrowprops=dict(color='royalblue', arrowstyle='->'))
+ax.annotate('', xy=(1.25, -2.5), xytext=(1.225, -3.5), arrowprops=dict(color='crimson', arrowstyle='->'))
+ax.annotate('', xy=(0.775, -3), xytext=(0.8,-2), arrowprops=dict(color='royalblue', arrowstyle='->'))
 
-    subplt = plt.subplot(4,4,1+4*p)
+subplt.set_title('Sleep-Wake Fold/Fold Hysteresis Loop (2D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0, 1.05,'a',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
 
-    subplt.scatter(x*1000,y,c='black',s=0.5)
-    subplt.axvline(preds,color='crimson',linestyle='--')
-    par_range_min = 500+float(par_range.split('-')[0])*23
-    par_range_max = 500+float(par_range.split('-')[1])*23
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
-    subplt.set_title(title[1+4*p-1],loc='left')
-    plt.xticks([par_range_min,par_range_max,1150])
-    ax = plt.gca()
-    ax.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        plt.xlabel('Light irradiance ($\\mu$mol photons m$^{-2}$ s$^{-1}$)',font_0)
-    plt.ylabel('Light attenuation coefficient (m$^{-1}$)',font_1)
+subplt = plt.subplot(1,2,2)
 
-thermoacoustic_par_range_list = ['0-1','0.05-1.05','0.1-1.1','0.15-1.15']
+df_sbf = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_forward.csv')
+df_sbr = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_reverse.csv')
+preds_sb = pd.read_csv('../model_results/sprott_b.csv')
 
-for p in range(len(thermoacoustic_par_range_list)):
+sb_forward_state = df_sbf['z']
+sb_forward_parameter = df_sbf['k']
+sb_reverse_state = df_sbr['z']
+sb_reverse_parameter = df_sbr['k']
 
-    par_range = thermoacoustic_par_range_list[p]
+sb_forward_state = sb_forward_state[::10]
+sb_forward_parameter = sb_forward_parameter[::10]
+sb_reverse_state = sb_reverse_state[::10]
+sb_reverse_parameter = sb_reverse_parameter[::10]
 
-    preds_0 = preds_20[p]
-    preds_1 = preds_21[p]
-    preds_2 = preds_22[p]
+sb_forward_state = sb_forward_state.values
+sb_forward_parameter = sb_forward_parameter.values
+sb_reverse_state = sb_reverse_state.values
+sb_reverse_parameter = sb_reverse_parameter.values
 
-    txt_0 = open('../empirical_test/empirical_data/thermoacoustic_20mv.txt')
-    datalines_0 = txt_0.readlines()
-    txt_1 = open('../empirical_test/empirical_data/thermoacoustic_40mv.txt')
-    datalines_1 = txt_1.readlines()
-    txt_2 = open('../empirical_test/empirical_data/thermoacoustic_60mv.txt')
-    datalines_2 = txt_2.readlines()
+sb_forward_parameter_cover = sb_forward_parameter[sb_forward_parameter < 4.7]
+sb_forward_parameter_bottom = sb_forward_parameter[sb_forward_parameter >= 4.7]
+sb_reverse_parameter_cover = sb_reverse_parameter[sb_reverse_parameter > 4.7]
+sb_reverse_parameter_bottom = sb_reverse_parameter[sb_reverse_parameter <= 4.7]
 
-    dataset_0 = []
-    dataset_1 = []
-    dataset_2 = []
+sb_forward_state_cover = sb_forward_state[:len(sb_forward_parameter_cover)]
+sb_forward_state_bottom = sb_forward_state[len(sb_forward_parameter_cover):]
+sb_reverse_state_cover = sb_reverse_state[:len(sb_reverse_parameter_cover)]
+sb_reverse_state_bottom = sb_reverse_state[len(sb_reverse_parameter_cover):]
 
-    for data in datalines_0:
-        data = data.strip().split('\t')
-        dataset_0.append(data)
+sbf_pred = preds_sb['preds_f'].item()
+sbr_pred = preds_sb['preds_r'].item()
 
-    for data in dataset_0:
-        data[0]=(float(data[0])-3.65630914691268160E+9)*0.02
-        data[1]=float(data[1])*1000/0.2175
+sbf_s = preds_sb['f_start'].item()
+sbf_o = preds_sb['f_over'].item()
+sbr_s = preds_sb['r_start'].item()
+sbr_o = preds_sb['r_over'].item()
 
-    dataset_0 = np.array(dataset_0)
+subplt.scatter(sb_forward_parameter_bottom,sb_forward_state_bottom,c='crimson',s=0.5)
+subplt.scatter(sb_reverse_parameter_bottom,sb_reverse_state_bottom,c='royalblue',s=0.5)
+subplt.scatter(sb_forward_parameter_cover,sb_forward_state_cover,c='crimson',s=0.5)
+subplt.scatter(sb_reverse_parameter_cover,sb_reverse_state_cover,c='royalblue',s=0.5)
 
-    for data in datalines_1:
-        data = data.strip().split('\t')
-        dataset_1.append(data)
+subplt.axvline(sbf_pred,color='crimson',linestyle='--')
+subplt.axvline(sbr_pred,color='royalblue',linestyle='--')
 
-    for data in dataset_1:
-        data[0]=(float(data[0])-3.65629963087196300E+9)*0.04
-        data[1]=float(data[1])*1000/0.2175
+for i in np.linspace(sbf_s,sbf_o,500):
+    subplt.axvline(i,color='silver',alpha=0.02)
+for i in np.linspace(sbr_s,sbr_o,500):
+    subplt.axvline(i,color='silver',alpha=0.02)
 
-    dataset_1 = np.array(dataset_1)
+plt.xticks([np.pi, 1.3*np.pi, 1.7*np.pi, 2*np.pi],['$\pi$', '$1.3\pi$', '$1.7\pi$', '$2\pi$'])
+plt.xlabel(r'$k$',fontsize=14)
+plt.ylabel(r'$z$',fontsize=14)
 
-    for data in datalines_2:
-        data = data.strip().split('\t')
-        dataset_2.append(data)
+ax = plt.gca()
 
-    for data in dataset_2:
-        data[0]=(float(data[0])-3.65630991104181150E+9)*0.06
-        data[1]=float(data[1])*1000/0.2175
+ax.annotate('', xy=(sbf_o, -7.1), xytext=(sbf_s, -7.1), arrowprops=dict(facecolor='black', arrowstyle='->'))
+ax.annotate('', xy=(sbr_o, -7.1), xytext=(sbr_s, -7.1), arrowprops=dict(facecolor='black', arrowstyle='->'))
 
-    dataset_2 = np.array(dataset_2)
+ax.annotate('', xy=(3.768, -2), xytext=(3.454, -2.5), arrowprops=dict(color='crimson', arrowstyle='->'))
+ax.annotate('', xy=(5.652, -2), xytext=(5.966,-2.5), arrowprops=dict(color='royalblue', arrowstyle='->'))
 
-    x_0 = dataset_0[:,0]
-    y_0 = dataset_0[:,1]
-    x_1 = dataset_1[:,0]
-    y_1 = dataset_1[:,1]
-    x_2 = dataset_2[:,0]
-    y_2 = dataset_2[:,1]
-
-    subplt = plt.subplot(4,4,2+4*p)
-
-    subplt.scatter(x_0,y_0,c='black',label='20mv/s',s=0.5)
-    subplt.scatter(x_1,y_1,c='sandybrown',label='40mv/s',s=0.5)
-    subplt.scatter(x_2,y_2,c='wheat',label='60mv/s',s=0.5)
-    subplt.axvline(preds_0,color='royalblue',linestyle='--')
-    subplt.axvline(preds_1,color='crimson',linestyle='--')
-    subplt.axvline(preds_2,color='forestgreen',linestyle='--')
-    par_range_min = float(par_range.split('-')[0])
-    par_range_max = float(par_range.split('-')[1])
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
-    subplt.set_title(title[2+4*p-1],loc='left')
-    plt.xticks([par_range_min,par_range_max,2.4])
-    ax = plt.gca()
-    ax.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        plt.xlabel('Voltage (V)',font_0)
-    plt.ylabel('Acoustic pressure (Pa)',font)
-
-Mo_par_range_list = ['160-142','159-141','158-140','157-139']
-
-for p in range(len(Mo_par_range_list)):
-
-    par_range = Mo_par_range_list[p]
-
-    preds = preds_3[p]
-
-    txt = open('../empirical_test/empirical_data/hypoxia_64PE_Mo_fold.txt')
-    datalines = txt.readlines()
-    dataset_orgin = []
-    for data in datalines:
-        data = data.strip().split('\t')
-        dataset_orgin.append(data)
-
-    dataset = []
-    for data in dataset_orgin:
-        data[0]=-float(data[0])
-        data[4]=float(data[4])
-        dataset.append([data[0],data[4]])
-
-
-    dataset = np.array(dataset)
-
-    x = dataset[:,0]
-    y = dataset[:,1]
-
-    subplt = plt.subplot(4,4,3+4*p)
-
-    subplt.scatter(x,y,c='black',s=0.5)
-    subplt.axvline(preds,color='crimson',linestyle='--')
-    par_range_min = -float(par_range.split('-')[0])
-    par_range_max = -float(par_range.split('-')[1])
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
-    subplt.set_title(title[3+4*p-1],loc='left')
-    plt.xticks([par_range_min,par_range_max,-125])
-    ax = plt.gca()
-    ax.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        plt.xlabel('Age (kyr BP)',font_0)
-    plt.ylabel('Molybdenum (mg/kg)',font)
-
-U_par_range_list = ['300-268','298-266','296-264','294-262']
-
-for p in range(len(U_par_range_list)):
-
-    par_range = U_par_range_list[p]
-
-    preds = preds_4[p]
-
-    txt = open('../empirical_test/empirical_data/hypoxia_64PE_U_branch.txt')
-    datalines = txt.readlines()
-    dataset_orgin = []
-    for data in datalines:
-        data = data.strip().split('\t')
-        dataset_orgin.append(data)
-
-    dataset = []
-    for data in dataset_orgin:
-        data[0]=-float(data[0])
-        data[6]=float(data[6])
-        dataset.append([data[0],data[6]])
-
-
-    dataset = np.array(dataset)
-
-    x = dataset[:,0]
-    y = dataset[:,1]
-
-    subplt = plt.subplot(4,4,4+4*p)
-
-    subplt.scatter(x,y,c='black',s=0.5)
-    subplt.axvline(preds,color='crimson',linestyle='--')
-    par_range_min = -float(par_range.split('-')[0])
-    par_range_max = -float(par_range.split('-')[1])
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
-    subplt.set_title(title[4+4*p-1],loc='left')
-    plt.xticks([par_range_min,par_range_max,-240])
-    ax = plt.gca()
-    ax.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        plt.xlabel('Age (kyr BP)',font_0)
-    plt.ylabel('Uranium (mg/kg)',font)
+subplt.set_title('Sprott B Hopf/Hopf Hysteresis Bursting (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
 
 plt.tight_layout()
 plt.savefig('../figures/FIG4.png',dpi=600)
+
 

@@ -327,7 +327,7 @@ for i in np.linspace(0.2,0.4,11):
         globalenv['x_time_series'] = rdf_x
         globalenv['k_time_series'] = rdf_k
         rscript = '''
-        E <- 5
+        E <- 8
         tau <- -2
         theta <- seq(0,2.5,by=0.5)
         window_size <- 100
@@ -394,7 +394,7 @@ for i in np.linspace(0.2,0.4,11):
         globalenv['x_time_series'] = rdf_x
         globalenv['k_time_series'] = rdf_k
         rscript = '''
-        E <- 5
+        E <- 8
         tau <- -2
         theta <- seq(0,2.5,by=0.5)
         window_size <- 100

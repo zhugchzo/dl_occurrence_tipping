@@ -47,7 +47,7 @@ os.chdir(current_dir)
 dt = 1
 t0 = 0
 tburn = 500 # burn-in period
-numSims = 2
+numSims = 20
 seed = 0 # random number generation seed
 sigma_T = 0.01 # noise intensity
 
