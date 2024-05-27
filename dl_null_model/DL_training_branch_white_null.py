@@ -77,12 +77,11 @@ for i in range(train_numbers):
     copy_sequences = sequences.copy()
 
     for j in range(pad_length,seq_len):
-        states_null.append(copy_sequences[i,j])
+        states_null.append(copy_sequences[i,j][0])
     np.random.shuffle(states_null)
 
     for j in range(pad_length,seq_len):
-        sequences[i,j][0] = states_null[j-pad_length][0]
-        sequences[i,j][1] = states_null[j-pad_length][1]
+        sequences[i,j][0] = states_null[j-pad_length]
 
 # training labels file
 label_f='/ouput_forward/ts_500/branch/combined/values.csv'
