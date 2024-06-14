@@ -32,7 +32,6 @@ for data in dataset:
     data[0] = (float(data[0])-3.65630991104181150E+9)*0.06
     data[1] = float(data[1])*1000/0.2175
 
-
 dataset_1 = dataset[:int(4E5/(2.4/1))] # 0-1
 dataset_2 = dataset[int(4E5/(2.4/0.05)):int(4E5/(2.4/1.05))] # 0.05-1.05
 dataset_3 = dataset[int(4E5/(2.4/0.1)):int(4E5/(2.4/1.1))]   # 0.1-1.1
@@ -84,10 +83,35 @@ df_ews = pd.concat(appended_ews).reset_index()
 if not os.path.exists('../data_nus'):
     os.makedirs('../data_nus')
 
-if not os.path.exists('../data_nus/thermoacoustic_hopf'):
-    os.makedirs('../data_nus/thermoacoustic_hopf')
+if not os.path.exists('../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf'):
+    os.makedirs('../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf')
 
 for i in np.arange(numSims)+1:
     df_resids = df_ews[df_ews['tsid'] == i][['Time','Residuals','b']]
-    filepath_resids='../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf_400_resids_{}.csv'.format(par_range_sum[i-1])
+    filepath_resids='../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf/thermoacoustic_60_hopf_400_resids_{}.csv'.format(par_range_sum[i-1])
     df_resids.to_csv(filepath_resids,index=False)
+
+    df_state = df_ews[df_ews['tsid'] == i][['Time','State variable','b']]
+
+    # Get the minimum and maximum values of the original 'b' column
+    b_min = df_state['b'].min()
+    b_max = df_state['b'].max()
+
+    # Create a new uniformly distributed 'b' column
+    new_b_values = np.linspace(b_min, b_max, series_len)
+
+    # Interpolate the 'State variable'
+    interpolated_values = np.interp(new_b_values, df_state['b'], df_state['State variable'])
+
+    # Create a new DataFrame for interpolated state variable
+    interpolated_df = pd.DataFrame({
+        'Time': np.arange(series_len),
+        'State variable': interpolated_values,
+        'b': new_b_values
+    })
+
+    filepath_state='../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf/thermoacoustic_60_hopf_400_state_{}.csv'.format(par_range_sum[i-1])
+    df_state.to_csv(filepath_state,index=False)
+
+    filepath_interpolate='../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf/thermoacoustic_60_hopf_400_interpolate_{}.csv'.format(par_range_sum[i-1])
+    interpolated_df.to_csv(filepath_interpolate,index=False)

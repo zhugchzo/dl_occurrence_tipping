@@ -33,9 +33,8 @@ for data in dataset_orgin:
     data[0] = float(data[0])
     data[6] = float(data[6])
     dataset.append([data[0],data[6]])
-
     
-dataset_1 = dataset[565:] # 300-268
+dataset_1 = dataset[564:] # 300-268
 dataset_2 = dataset[525:1109] # 298-266
 dataset_3 = dataset[485:1075] # 296-264
 dataset_4 = dataset[445:1040] # 294-262
@@ -99,3 +98,29 @@ for i in np.arange(numSims)+1:
     df_resids = df_ews[df_ews['tsid'] == i][['Time','Residuals','b']]
     filepath_resids='../data_nus/hypoxia_64PE_U_branch/hypoxia_64PE_U_branch_400_resids_{}.csv'.format(par_range_sum[i-1])
     df_resids.to_csv(filepath_resids,index=False)
+
+    df_state = df_ews[df_ews['tsid'] == i][['Time','State variable','b']]
+
+    # Get the minimum and maximum values of the original 'b' column
+    b_min = df_state['b'].min()
+    b_max = df_state['b'].max()
+
+    # Create a new uniformly distributed 'b' column
+    new_b_values = np.linspace(b_min, b_max, series_len)
+
+    # Interpolate the 'State variable'
+    df_state_reverse = df_state.sort_values(by='b', ascending=True)
+    interpolated_values = np.interp(new_b_values, df_state_reverse['b'], df_state_reverse['State variable'])
+
+    # Create a new DataFrame for interpolated state variable
+    interpolated_df = pd.DataFrame({
+        'Time': np.arange(series_len),
+        'State variable': interpolated_values[::-1],
+        'b': new_b_values[::-1]
+    })
+
+    filepath_state='../data_nus/hypoxia_64PE_U_branch/hypoxia_64PE_U_branch_400_state_{}.csv'.format(par_range_sum[i-1])
+    df_state.to_csv(filepath_state,index=False)
+
+    filepath_interpolate='../data_nus/hypoxia_64PE_U_branch/hypoxia_64PE_U_branch_400_interpolate_{}.csv'.format(par_range_sum[i-1])
+    interpolated_df.to_csv(filepath_interpolate,index=False)

@@ -44,7 +44,6 @@ for p in range(len(microcosm_par_range_list)):
             
 
     # normalizing input time series by the average. 
-    # 按平均值规范化输入时间串行。
     values_avg = 0.0
     count_avg = 0
     for i in range (0,seq_len):
@@ -87,9 +86,9 @@ for p in range(len(thermoacoustic_par_range_list)):
 
     par_range = thermoacoustic_par_range_list[p]
  
-    df_resids_0 = pandas.read_csv('../data_nus/thermoacoustic_hopf/thermoacoustic_20_hopf_400_resids_{}.csv'.format(par_range))
-    df_resids_1 = pandas.read_csv('../data_nus/thermoacoustic_hopf/thermoacoustic_40_hopf_400_resids_{}.csv'.format(par_range))
-    df_resids_2 = pandas.read_csv('../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf_400_resids_{}.csv'.format(par_range))
+    df_resids_0 = pandas.read_csv('../data_nus/thermoacoustic_hopf/thermoacoustic_20_hopf/thermoacoustic_20_hopf_400_resids_{}.csv'.format(par_range))
+    df_resids_1 = pandas.read_csv('../data_nus/thermoacoustic_hopf/thermoacoustic_40_hopf/thermoacoustic_40_hopf_400_resids_{}.csv'.format(par_range))
+    df_resids_2 = pandas.read_csv('../data_nus/thermoacoustic_hopf/thermoacoustic_60_hopf/thermoacoustic_60_hopf_400_resids_{}.csv'.format(par_range))
     keep_col_resids = ['Residuals','b']
     new_f_resids_0 = df_resids_0[keep_col_resids]
     values_resids_0 = new_f_resids_0.values
@@ -113,8 +112,6 @@ for p in range(len(thermoacoustic_par_range_list)):
             
 
     # normalizing input time series by the average. 
-    # 按平均值规范化输入时间串行。
-
     values_avg_0 = 0.0
     count_avg_0 = 0
     for i in range (0,seq_len):
@@ -222,8 +219,6 @@ for p in range(len(Mo_par_range_list)):
             
 
     # normalizing input time series by the average. 
-    # 按平均值规范化输入时间串行。
-
     values_avg = 0.0
     count_avg = 0
     for i in range (0,seq_len):
@@ -280,7 +275,6 @@ for p in range(len(U_par_range_list)):
             
 
     # normalizing input time series by the average. 
-    # 按平均值规范化输入时间串行。
     values_avg = 0.0
     count_avg = 0
     for i in range (0,seq_len):
@@ -325,4 +319,4 @@ dic_preds = {'preds_1':preds_l_1,
              'preds_4':preds_l_4}
 
 csv_out = pandas.DataFrame(dic_preds)
-csv_out.to_csv('../../results/empirical_results.csv',header = True)
+csv_out.to_csv('../../results/empirical_nus_results_dl.csv',header = True)
