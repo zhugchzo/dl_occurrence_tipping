@@ -2,7 +2,7 @@
 
 This is the code repository to accompnay the article:
 
-***Deep learning for the occurrence of tipping points.*** *Chengzuo Zhuge, Jiawei Li, Wei Chen.*
+***Deep learning for the occurrence of tipping points.*** *Chengzuo Zhuge, Jiawei Li, Wei Chen, Jianxi Gao.*
 
 # Requirements
 
@@ -30,7 +30,7 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 **./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment, the thermoacoustic experiment and the metallic elements in sediment cores. The original empirical datasets and the empirical test time series data after sampling and computing residual we used in manuscript are also in this directory.
 
-**./results:** Experimental results of the trained deep learning models on the model time series data and the empirical test time series data.
+**./results:** Experimental results of the trained deep learning models on the model time series data and the empirical test time series data. Experimental results of the competing algorithms on the model time series data and the empirical test time series data.
 
 **./draw_fig:** Code to generate figures used in manuscript.
 
@@ -88,7 +88,7 @@ The results in the paper are obtained from the following workflow:
 
    The same file notation is used for the Sprott B hysteresis bursting model. These scripts also detrend the time series to get residuals.
 
-4. **Process empirical data.** Scripts to process the empirical data (including irregular sampling and computing residuals) are availalble in the directory `./empirical_test/sim_data_nus/`.
+4. **Process empirical data.** Scripts to process the empirical data (including irregular sampling and computing residuals for DL algorithm, and linear interpolation for competing algorithms) are availalble in the directory `./empirical_test/sim_data_nus/`.
 
 5. **Generate predictions by deep learning models.** Before we feed the residual and parameter data into the neural networks to make predictions, there are two preprocessing matters. First, we pad both residual and parameter series are padded on the left by zeroes to a length of 500. Second,  each residual time series is normalized by dividing each time series data point by the average absolute value of the residuals across the entire time series. In addition, each parameter time series is also normalized: each data point in the time series is subtracted by the initial value of the parameter series, and then divided by the distance between the initial and final values of the parameter series. These two preprocessing matters are also performed for training data before they are fed into the neural networks in the **Generate the training data**.
 
