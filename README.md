@@ -109,7 +109,7 @@ The results in the paper are obtained from the following workflow:
    For predictions of empirical time series, to test on all irregularly-sampled empirical time series used in manuscript, run
 
    ```python
-   python ./empirical_test/test_empirical_data/empirical_sum.py
+   python ./empirical_test/test_empirical_data/empirical_sum_dl.py
    ```
 
    The results of predictions will be exported to the directory `./results/`. **If using your own data, it is important to detrend it using a Lowess filter with span 0.20 and perform the two preprocessing matters mentioned above.**
