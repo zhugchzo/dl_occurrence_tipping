@@ -26,9 +26,9 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 **./gen_train_set:** Code to generate training data for the deep learning algorithm.
 
-**./model_test:** Code to simulate, perform regular and irregular sampling, and compute residual time series for the test models, to compute indicators of competing algorithms in the regularly-sampled situation, and to test trained deep learning models on simulated model test time series. These include the May's harvesting model, three-species food chain model, consumer−resource model, global energy balance model, middle Pleistocene transition model, Amazon rainforest dieback model, sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. The model test time series data after sampling and computing residual we used in manuscript is also in this directory.
+**./model_test:** Code to simulate, perform regular and irregular sampling, and compute residual time series for the test models, to compute early warning signals of competing algorithms in the regularly-sampled situation, and to test trained deep learning models on simulated model test time series. These include the May's harvesting model, three-species food chain model, consumer−resource model, global energy balance model, middle Pleistocene transition model, Amazon rainforest dieback model, sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. The model test time series data after sampling and computing residual we used in manuscript is also in this directory.
 
-**./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment, the thermoacoustic experiment and the metallic elements in sediment cores. The original empirical datasets and the empirical test time series data after sampling and computing residual we used in manuscript are also in this directory.
+**./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, to compute early warning signals of competing algorithms, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment, the thermoacoustic experiment and the metallic elements in sediment cores. The original empirical datasets and the empirical test time series data after sampling and computing residual we used in manuscript are also in this directory.
 
 **./results:** Experimental results of the trained deep learning models on the model time series data and the empirical test time series data. Experimental results of the competing algorithms on the model time series data and the empirical test time series data.
 
@@ -72,7 +72,7 @@ The results in the paper are obtained from the following workflow:
    python ./model_test/sim_data/sim_may_fold.py
    ```
 
-   The same file notation is used for the other models except sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. These scripts also detrend the time series to get residuals, and compute indicators of competing algorithms in the regularly-sampled situation.
+   The same file notation is used for the other models except sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. These scripts also detrend the time series to get residuals, and compute early warning signals of competing algorithms in the regularly-sampled situation.
 
    Simulate the model time series with hysteresis phenomenon, code to do this is available in `./model_test/sim_hysteresis/`. For example, to simulate trajectories of sleep-wake hysteresis loop model, run 
 
