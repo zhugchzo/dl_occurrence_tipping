@@ -1,7 +1,7 @@
 import pandas
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
+from matplotlib.ticker import FuncFormatter
 import os
 
 # Get the absolute path of the current file
@@ -12,6 +12,11 @@ current_dir = os.path.dirname(current_file_path)
 
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
+
+def custom_formatter(x, pos):
+    if x.is_integer():
+        return f"{int(x)}"
+    return f"{x}"
 
 seq_len = 500
 font_0 = {'family':'Times New Roman','weight':'bold','size': 12}
@@ -83,7 +88,7 @@ title = ['A1','B1','C1','D1','A2','B2','C2','D2','A3','B3','C3','D3','A4','B4','
 
 fig, axs = plt.subplots(4, 4, figsize=(12, 9))
 
-microcosm_par_range_list = ['0-14','1-15','2-16','3-17']
+microcosm_par_range_list = ['0-15','1-16','2-17','3-17.5']
 
 for p in range(len(microcosm_par_range_list)):
 
@@ -138,12 +143,17 @@ for p in range(len(microcosm_par_range_list)):
     subplt.axvline(preds_null,color='blueviolet',linestyle=':',alpha=0.9,label='Null Model')
     subplt.axvline(preds_combined,color='darkorange',linestyle=':',alpha=0.9,label='Combined Model')
 
+    if p == 3:
+        par_range_min = 500+float(par_range.split('-')[0])*23
+        par_range_max = 500+float(par_range.split('-')[1])*23
+
     par_range_min = 500+float(par_range.split('-')[0])*23
     par_range_max = 500+float(par_range.split('-')[1])*23
     for i in np.linspace(par_range_min,par_range_max,500):
         subplt.axvline(i,color='silver',alpha=0.02)
     subplt.set_title(title[1+4*p-1],loc='left')
     subplt.set_xticks([par_range_min,par_range_max,1150])
+    subplt.xaxis.set_major_formatter(FuncFormatter(custom_formatter))
     subplt.tick_params(axis='both', labelsize=10)
     if p == 3:
         subplt.set_xlabel('Light irradiance ($\\mu$mol photons m$^{-2}$ s$^{-1}$)',font_0)
@@ -300,7 +310,7 @@ for p in range(len(U_par_range_list)):
         subplt.set_xlabel('Age (kyr BP)',font_0)
     subplt.set_ylabel('Uranium (mg/kg)',font)
 
-plt.subplots_adjust(top=0.9, bottom=0.055, left=0.05, right=0.99, hspace=0.3, wspace=0.4)
+plt.subplots_adjust(top=0.9, bottom=0.055, left=0.05, right=0.99, hspace=0.4, wspace=0.4)
 
 handles, labels = axs[0, 0].get_legend_handles_labels()
 fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,1), ncol=3, frameon=False, fontsize=12)

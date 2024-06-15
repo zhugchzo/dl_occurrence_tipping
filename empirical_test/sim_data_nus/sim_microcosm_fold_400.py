@@ -46,13 +46,13 @@ for data in dataset:
     data[0] = 500 + float(data[0])*23
     data[1] = float(data[1])
 
-dataset_1 = dataset[:3949] # 0-14
-dataset_2 = dataset[282:4231] # 1-15
-dataset_3 = dataset[564:4512] # 2-16
-dataset_4 = dataset[846:4794] # 3-17
+dataset_1 = dataset[:4231] # 0-15
+dataset_2 = dataset[282:4512] # 1-16
+dataset_3 = dataset[564:4794] # 2-17
+dataset_4 = dataset[846:4935] # 3-17.5
 
 dataset_sum = [dataset_1,dataset_2,dataset_3,dataset_4]
-par_range_sum = ['0-14','1-15','2-16','3-17']
+par_range_sum = ['0-15','1-16','2-17','3-17.5']
 
 appended_ews = []
 

@@ -24,7 +24,7 @@ preds_l_22 = []
 preds_l_3 = []
 preds_l_4 = []
 
-microcosm_par_range_list = ['0-14','1-15','2-16','3-17']
+microcosm_par_range_list = ['0-15','1-16','2-17','3-17.5']
 
 for p in range(len(microcosm_par_range_list)):
 

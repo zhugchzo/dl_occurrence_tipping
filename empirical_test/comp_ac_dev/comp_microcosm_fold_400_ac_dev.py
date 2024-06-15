@@ -36,7 +36,7 @@ if not os.path.exists('../data_nus'):
 if not os.path.exists('../data_nus/microcosm_fold'):
     os.makedirs('../data_nus/microcosm_fold')
 
-par_range_sum = ['0-14','1-15','2-16','3-17']
+par_range_sum = ['0-15','1-16','2-17','3-17.5']
 
 for c in range(numSims):
 
