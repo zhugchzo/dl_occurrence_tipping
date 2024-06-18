@@ -43,7 +43,7 @@ for i in range(0,len(clean_NA),2):
         dataset[j][1] = NA_approximate[j-indexmin]
 
 for data in dataset:
-    data[0] = 500 + float(data[0])*23
+    data[0] = 477 + float(data[0])*23
     data[1] = float(data[1])
 
 dataset_1 = dataset[:4231] # 0-15

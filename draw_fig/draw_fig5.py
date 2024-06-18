@@ -16,7 +16,8 @@ os.chdir(current_dir)
 def custom_formatter(x, pos):
     if x.is_integer():
         return f"{int(x)}"
-    return f"{x}"
+    else:
+        return f"{x:g}"
 
 seq_len = 500
 font_0 = {'family':'Times New Roman','weight':'bold','size': 12}
@@ -123,7 +124,7 @@ for p in range(len(microcosm_par_range_list)):
             dataset[j][1] = NA_approximate[j-indexmin]
 
     for data in dataset:
-        data[0]=(500+float(data[0])*23)/1000
+        data[0]=(477+float(data[0])*23)/1000
         data[1]=float(data[1])
 
     dataset = np.array(dataset)
@@ -138,21 +139,21 @@ for p in range(len(microcosm_par_range_list)):
     subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
     subplt.axvline(preds_ac,color='royalblue',linestyle='-.',alpha=0.9,label='Degenerate Fingerprinting')
     if p == 0:
-        rmline = subplt.axvline(500,color='aqua',linestyle='-.',alpha=0.9,label='BB Method')
+        rmline = subplt.axvline(477,color='aqua',linestyle='-.',alpha=0.9,label='BB Method')
     subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',alpha=0.9,label='DEV')
     subplt.axvline(preds_null,color='blueviolet',linestyle=':',alpha=0.9,label='Null Model')
     subplt.axvline(preds_combined,color='darkorange',linestyle=':',alpha=0.9,label='Combined Model')
 
     if p == 3:
-        par_range_min = 500+float(par_range.split('-')[0])*23
-        par_range_max = 500+float(par_range.split('-')[1])*23
+        par_range_min = 477+float(par_range.split('-')[0])*23
+        par_range_max = 477+float(par_range.split('-')[1])*23
 
-    par_range_min = 500+float(par_range.split('-')[0])*23
-    par_range_max = 500+float(par_range.split('-')[1])*23
+    par_range_min = 477+float(par_range.split('-')[0])*23
+    par_range_max = 477+float(par_range.split('-')[1])*23
     for i in np.linspace(par_range_min,par_range_max,500):
         subplt.axvline(i,color='silver',alpha=0.02)
     subplt.set_title(title[1+4*p-1],loc='left')
-    subplt.set_xticks([par_range_min,par_range_max,1150])
+    subplt.set_xticks([par_range_min,par_range_max,1135])
     subplt.xaxis.set_major_formatter(FuncFormatter(custom_formatter))
     subplt.tick_params(axis='both', labelsize=10)
     if p == 3:
@@ -203,6 +204,7 @@ for p in range(len(thermoacoustic_par_range_list)):
         subplt.axvline(i,color='silver',alpha=0.02)
     subplt.set_title(title[2+4*p-1],loc='left')
     subplt.set_xticks([par_range_min,par_range_max,2.4])
+    subplt.xaxis.set_major_formatter(FuncFormatter(custom_formatter))
     subplt.tick_params(axis='both', labelsize=10)
     if p == 3:
         subplt.set_xlabel('Voltage (V)',font_0)
