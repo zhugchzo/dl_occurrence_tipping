@@ -2,7 +2,7 @@
 
 This is the code repository to accompnay the article:
 
-***Deep learning for the occurrence of tipping points.*** *Chengzuo Zhuge, Jiawei Li, Wei Chen, Jianxi Gao.*
+***Deep learning for the occurrence of tipping points.*** *Chengzuo Zhuge, Jiawei Li, Wei Chen.*
 
 # Requirements
 
