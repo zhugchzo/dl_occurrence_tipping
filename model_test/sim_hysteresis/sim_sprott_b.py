@@ -26,7 +26,7 @@ current_dir = os.path.dirname(current_file_path)
 os.chdir(current_dir)
 
 # Simulation parameters
-tmax = 450
+tmax = 400
 
 # EWS parameters
 dt2 = 1 # spacing between time-series for EWS computation

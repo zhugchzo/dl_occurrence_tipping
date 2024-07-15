@@ -46,7 +46,7 @@ os.chdir(current_dir)
 dt = 0.01
 t0 = 0
 tburn = 500 # burn-in period
-numSims = 20
+numSims = 50
 seed = 0 # random number generation seed
 sigma_w = 0.01 # noise intensity
 sigma_c = 0.01
@@ -141,7 +141,7 @@ for i in np.linspace(0.2,0.4,11):
         equip0 = 0.01
         
         tmax = int(np.random.us(250,500)) # randomly selected sequence length
-        n = np.random.us(100,500) # length of the randomly selected sequence to the bifurcation
+        n = np.random.us(5,500) # length of the randomly selected sequence to the bifurcation
         series_len = tmax + int(n)
 
         t = np.arange(t0,sim_len,dt)
@@ -255,6 +255,23 @@ for i in np.linspace(0.2,0.4,11):
         df_temp_1.set_index('Time', inplace=True)
         df_cut_1 = df_temp_1.iloc[0:tmax].copy()
 
+        # Get the minimum and maximum values of the original 'k' column
+        k_min = df_cut_1['k'].min()
+        k_max = df_cut_1['k'].max()
+
+        # Create a new uniformly distributed 'k' column
+        new_k_values = np.linspace(k_min, k_max, tmax)
+
+        # Interpolate the 'State variable'
+        interpolated_x_values = np.interp(new_k_values, df_cut_1['k'], df_cut_1['x'])
+        interpolated_c_values = np.interp(new_k_values, df_cut_1['k'], df_cut_1['c'])
+        interpolated_p_values = np.interp(new_k_values, df_cut_1['k'], df_cut_1['p'])
+
+        df_cut_1['interpolated_x'] = interpolated_x_values
+        df_cut_1['interpolated_c'] = interpolated_c_values
+        df_cut_1['interpolated_p'] = interpolated_p_values
+        df_cut_1['interpolated_k'] = new_k_values
+
         df_temp_2 = df_temp.iloc[d2].copy() # regularly-sampled time series
         df_temp_2['Time'] = np.arange(0,series_len)
         df_temp_2.set_index('Time', inplace=True)
@@ -320,8 +337,8 @@ for i in np.linspace(0.2,0.4,11):
     print('\nBegin DEV computation\n')
 
     for i in range(numSims):
-        df_traj_x = df_traj1[df_traj1['tsid'] == i+1]['x']
-        df_traj_k = df_traj1[df_traj1['tsid'] == i+1]['k']
+        df_traj_x = df_traj1[df_traj1['tsid'] == i+1]['interpolated_x']
+        df_traj_k = df_traj1[df_traj1['tsid'] == i+1]['interpolated_k']
         rdf_x = pandas2ri.py2rpy(df_traj_x)
         rdf_k = pandas2ri.py2rpy(df_traj_k)
         globalenv['x_time_series'] = rdf_x
@@ -472,7 +489,7 @@ for i in np.linspace(0.2,0.4,11):
     # Compute PCA for irregularly-sampled time series
     for i in range(numSims):
         df_traj_temp = df_traj1[df_traj1['tsid'] == i+1]
-        traj = np.array(df_traj_temp[['x','c','p']])
+        traj = np.array(df_traj_temp[['interpolated_x','interpolated_c','interpolated_p']])
         mean_traj = np.mean(traj,axis=1,keepdims=True)
         traj = traj - mean_traj
 
@@ -541,7 +558,7 @@ for i in np.linspace(0.2,0.4,11):
             # Include a column in the DataFrames for realisation number and variable
             df_degf_temp['tsid'] = i+1
             df_degf_temp['Variable'] = var
-            df_degf_temp['k'] = df_traj_temp['k']
+            df_degf_temp['k'] = df_traj_temp['interpolated_k']
                 
             # Add DataFrames to list
             appended_degf_1.append(df_degf_temp)

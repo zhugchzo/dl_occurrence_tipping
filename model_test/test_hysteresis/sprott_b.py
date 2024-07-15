@@ -14,13 +14,13 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-if not os.path.exists('../../model_results'):
-    os.makedirs('../../model_results')
+if not os.path.exists('../../results'):
+    os.makedirs('../../results')
 
-kk = 5
+kk = 10
 
 seq_len = 500
-test_len = 450
+test_len = 400
 
 f_trans = 4.58982161367064
 r_trans = 4.83495634709873
@@ -75,7 +75,7 @@ test_preds_record_r = []
 
 for i in range(1,kk+1):
 
-    model_name = '../../dl_model/best_model_hopf_white_{}.pkl'.format(i)
+    model_name = '../../dl_model/best_model_{}.pkl'.format(i)
 
     model = load_model(model_name)
 
@@ -105,7 +105,7 @@ relative_er = error_r/distance_r
 preds_results = {'preds_f':preds_f,'preds_r':preds_r,'relative_ef':relative_ef,'relative_er':relative_er,
                  'f_start':f_start,'f_over':f_over,'r_start':r_start,'r_over':r_over}
 preds_results = pandas.DataFrame(preds_results,index=[0])
-preds_results.to_csv('../../model_results/sprott_b.csv',header = True)
+preds_results.to_csv('../../results/sprott_b.csv',header = True)
 
 
 

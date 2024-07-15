@@ -46,7 +46,7 @@ os.chdir(current_dir)
 dt = 0.01
 t0 = 0
 tburn = 500 # burn-in period
-numSims = 20
+numSims = 50
 seed = 0 # random number generation seed
 sigma = 0.01 # noise intensity
 
@@ -105,7 +105,7 @@ for i in np.linspace(0,0.2,11):
         equi0 = 0.8197
 
         tmax = int(np.random.uniform(250,500)) # randomly selected sequence length
-        n = np.random.uniform(100,500) # length of the randomly selected sequence to the bifurcation
+        n = np.random.uniform(5,500) # length of the randomly selected sequence to the bifurcation
         series_len = tmax + int(n)
 
         t = np.arange(t0,sim_len,dt)
@@ -176,6 +176,19 @@ for i in np.linspace(0,0.2,11):
         df_temp_1.set_index('Time', inplace=True)
         df_cut_1 = df_temp_1.iloc[0:tmax].copy()
 
+        # Get the minimum and maximum values of the original 'b' column
+        b_min = df_cut_1['b'].min()
+        b_max = df_cut_1['b'].max()
+
+        # Create a new uniformly distributed 'b' column
+        new_b_values = np.linspace(b_min, b_max, tmax)
+
+        # Interpolate the 'State variable'
+        interpolated_values = np.interp(new_b_values, df_cut_1['b'], df_cut_1['x'])
+
+        df_cut_1['interpolated_x'] = interpolated_values
+        df_cut_1['interpolated_b'] = new_b_values
+
         df_temp_2 = df_temp.iloc[c2].copy() # regularly-sampled time series
         df_temp_2['Time'] = np.arange(0,series_len)
         df_temp_2.set_index('Time', inplace=True)
@@ -241,8 +254,8 @@ for i in np.linspace(0,0.2,11):
     print('\nBegin DEV computation\n')
 
     for i in range(numSims):
-        df_traj_x = df_traj1[df_traj1['tsid'] == i+1]['x']
-        df_traj_b = df_traj1[df_traj1['tsid'] == i+1]['b']
+        df_traj_x = df_traj1[df_traj1['tsid'] == i+1]['interpolated_x']
+        df_traj_b = df_traj1[df_traj1['tsid'] == i+1]['interpolated_b']
         rdf_x = pandas2ri.py2rpy(df_traj_x)
         rdf_b = pandas2ri.py2rpy(df_traj_b)
         globalenv['x_time_series'] = rdf_x
@@ -410,7 +423,7 @@ for i in np.linspace(0,0.2,11):
             appended_ews_1.append(df_ews_temp)
 
         # loop through variable (only 1 in this model)
-        for var in ['x']:
+        for var in ['interpolated_x']:
             df_traj_temp = df_traj1[df_traj1['tsid'] == i+1]
             ews_dic = ewstools.core.ews_compute(df_traj_temp[var], 
                             roll_window = rw_degf,
@@ -425,7 +438,7 @@ for i in np.linspace(0,0.2,11):
             # Include a column in the DataFrames for realisation number and variable
             df_degf_temp['tsid'] = i+1
             df_degf_temp['Variable'] = var
-            df_degf_temp['b'] = df_traj_temp['b']
+            df_degf_temp['b'] = df_traj_temp['interpolated_b']
                 
             # Add DataFrames to list
             appended_degf_1.append(df_degf_temp)

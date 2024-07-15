@@ -13,7 +13,7 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-kk = 5
+kk = 10
 
 seq_len = 500
 
@@ -24,7 +24,7 @@ preds_l_22 = []
 preds_l_3 = []
 preds_l_4 = []
 
-microcosm_par_range_list = ['0-15','1-16','2-17','3-17.5']
+microcosm_par_range_list = ['0-16','0.5-16.5','1-17','1.5-17.5']
 
 for p in range(len(microcosm_par_range_list)):
 
@@ -65,7 +65,7 @@ for p in range(len(microcosm_par_range_list)):
 
     for i in range(1,kk+1):
 
-        model_name = '../../dl_model/best_model_fold_white_{}.pkl'.format(i)
+        model_name = '../../dl_model/best_model_{}.pkl'.format(i)
 
         model = load_model(model_name)
 
@@ -171,7 +171,7 @@ for p in range(len(thermoacoustic_par_range_list)):
 
     for i in range(1,kk+1):
 
-        model_name = '../../dl_model/best_model_hopf_white_{}.pkl'.format(i)
+        model_name = '../../dl_model/best_model_{}.pkl'.format(i)
 
         model = load_model(model_name)
 
@@ -199,7 +199,7 @@ for p in range(len(thermoacoustic_par_range_list)):
     preds_l_21.append(preds_1)
     preds_l_22.append(preds_2)
 
-Mo_par_range_list = ['160-142','159-141','158-140','157-139']
+Mo_par_range_list = ['160-140','159-139','158-138','157-137']
 
 for p in range(len(Mo_par_range_list)):
 
@@ -240,7 +240,7 @@ for p in range(len(Mo_par_range_list)):
 
     for i in range(1,kk+1):
 
-        model_name = '../../dl_model/best_model_fold_red_{}.pkl'.format(i)
+        model_name = '../../dl_model/best_model_{}.pkl'.format(i)
 
         model = load_model(model_name)
 
@@ -296,7 +296,7 @@ for p in range(len(U_par_range_list)):
 
     for i in range(1,kk+1):
 
-        model_name = '../../dl_model/best_model_branch_red_{}.pkl'.format(i)
+        model_name = '../../dl_model/best_model_{}.pkl'.format(i)
 
         model = load_model(model_name)
 

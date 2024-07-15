@@ -28,7 +28,6 @@ df_dl = pandas.read_csv('../results/empirical_nus_results_dl.csv')
 df_ac = pandas.read_csv('../results/empirical_nus_results_ac.csv')
 df_dev = pandas.read_csv('../results/empirical_nus_results_dev.csv')
 df_null = pandas.read_csv('../results/empirical_nus_results_null.csv')
-df_combined = pandas.read_csv('../results/empirical_nus_results_combined.csv')
 
 # dl
 preds_dl_1 = df_dl['preds_1'].values
@@ -74,22 +73,11 @@ preds_null_2 = list(preds_null_2)
 preds_null_3 = list(preds_null_3)
 preds_null_4 = list(preds_null_4)
 
-# combined model
-preds_combined_1 = df_combined['preds_1'].values
-preds_combined_2 = df_combined['preds_20'].values
-preds_combined_3 = df_combined['preds_3'].values
-preds_combined_4 = df_combined['preds_4'].values
-
-preds_combined_1 = list(preds_combined_1)
-preds_combined_2 = list(preds_combined_2)
-preds_combined_3 = list(preds_combined_3)
-preds_combined_4 = list(preds_combined_4)
-
 title = ['A1','B1','C1','D1','A2','B2','C2','D2','A3','B3','C3','D3','A4','B4','C4','D4']
 
 fig, axs = plt.subplots(4, 4, figsize=(12, 9))
 
-microcosm_par_range_list = ['0-15','1-16','2-17','3-17.5']
+microcosm_par_range_list = ['0-16','0.5-16.5','1-17','1.5-17.5']
 
 for p in range(len(microcosm_par_range_list)):
 
@@ -99,7 +87,6 @@ for p in range(len(microcosm_par_range_list)):
     preds_ac = preds_ac_1[p]
     preds_dev = preds_dev_1[p]
     preds_null = preds_null_1[p]
-    preds_combined = preds_combined_1[p]
 
     txt = open('../empirical_test/empirical_data/microcosm.txt')
     datalines = txt.readlines()
@@ -142,7 +129,6 @@ for p in range(len(microcosm_par_range_list)):
         rmline = subplt.axvline(477,color='aqua',linestyle='-.',alpha=0.9,label='BB Method')
     subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',alpha=0.9,label='DEV')
     subplt.axvline(preds_null,color='blueviolet',linestyle=':',alpha=0.9,label='Null Model')
-    subplt.axvline(preds_combined,color='darkorange',linestyle=':',alpha=0.9,label='Combined Model')
 
     if p == 3:
         par_range_min = 477+float(par_range.split('-')[0])*23
@@ -170,7 +156,6 @@ for p in range(len(thermoacoustic_par_range_list)):
     preds_ac = preds_ac_2[p]
     preds_dev = preds_dev_2[p]
     preds_null = preds_null_2[p]
-    preds_combined = preds_combined_2[p]
 
     txt = open('../empirical_test/empirical_data/thermoacoustic_20mv.txt')
     datalines = txt.readlines()
@@ -190,13 +175,12 @@ for p in range(len(thermoacoustic_par_range_list)):
 
     subplt = axs[p,1]
 
-    subplt.scatter(x,y,c='black',label='40mv/s',s=0.5)
+    subplt.scatter(x,y,c='black',s=0.5)
 
-    subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
     subplt.axvline(preds_ac,color='royalblue',linestyle='-.',alpha=0.9,label='Degenerate Fingerprinting')
     subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',alpha=0.9,label='DEV')
     subplt.axvline(preds_null,color='blueviolet',linestyle=':',alpha=0.9,label='Null Model')
-    subplt.axvline(preds_combined,color='darkorange',linestyle=':',alpha=0.9,label='Combined Model')
+    subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
 
     par_range_min = float(par_range.split('-')[0])
     par_range_max = float(par_range.split('-')[1])
@@ -210,7 +194,7 @@ for p in range(len(thermoacoustic_par_range_list)):
         subplt.set_xlabel('Voltage (V)',font_0)
     subplt.set_ylabel('Acoustic pressure (Pa)',font)
 
-Mo_par_range_list = ['160-142','159-141','158-140','157-139']
+Mo_par_range_list = ['160-140','159-139','158-138','157-137']
 
 for p in range(len(Mo_par_range_list)):
 
@@ -220,7 +204,6 @@ for p in range(len(Mo_par_range_list)):
     preds_ac = preds_ac_3[p]
     preds_dev = preds_dev_3[p]
     preds_null = preds_null_3[p]
-    preds_combined = preds_combined_3[p]
 
     txt = open('../empirical_test/empirical_data/hypoxia_64PE_Mo_fold.txt')
     datalines = txt.readlines()
@@ -248,7 +231,6 @@ for p in range(len(Mo_par_range_list)):
     subplt.axvline(preds_ac,color='aqua',linestyle='-.',alpha=0.9,label='BB Method')
     subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',alpha=0.9,label='DEV')
     subplt.axvline(preds_null,color='blueviolet',linestyle=':',alpha=0.9,label='Null Model')
-    subplt.axvline(preds_combined,color='darkorange',linestyle=':',alpha=0.9,label='Combined Model')
 
     par_range_min = -float(par_range.split('-')[0])
     par_range_max = -float(par_range.split('-')[1])
@@ -271,7 +253,6 @@ for p in range(len(U_par_range_list)):
     preds_ac = preds_ac_4[p]
     preds_dev = preds_dev_4[p]
     preds_null = preds_null_4[p]
-    preds_combined = preds_combined_4[p]
 
     txt = open('../empirical_test/empirical_data/hypoxia_64PE_U_branch.txt')
     datalines = txt.readlines()
@@ -299,7 +280,6 @@ for p in range(len(U_par_range_list)):
     subplt.axvline(preds_ac,color='aqua',linestyle='-.',alpha=0.9,label='BB Method')
     subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',alpha=0.9,label='DEV')
     subplt.axvline(preds_null,color='blueviolet',linestyle=':',alpha=0.9,label='Null Model')
-    subplt.axvline(preds_combined,color='darkorange',linestyle=':',alpha=0.9,label='Combined Model')
 
     par_range_min = -float(par_range.split('-')[0])
     par_range_max = -float(par_range.split('-')[1])
@@ -312,10 +292,10 @@ for p in range(len(U_par_range_list)):
         subplt.set_xlabel('Age (kyr BP)',font_0)
     subplt.set_ylabel('Uranium (mg/kg)',font)
 
-plt.subplots_adjust(top=0.9, bottom=0.055, left=0.05, right=0.99, hspace=0.4, wspace=0.4)
+plt.subplots_adjust(top=0.93, bottom=0.055, left=0.05, right=0.99, hspace=0.4, wspace=0.4)
 
 handles, labels = axs[0, 0].get_legend_handles_labels()
-fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,1), ncol=3, frameon=False, fontsize=12)
+fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,1), ncol=5, frameon=False, fontsize=12)
 
 rmline.remove()
 

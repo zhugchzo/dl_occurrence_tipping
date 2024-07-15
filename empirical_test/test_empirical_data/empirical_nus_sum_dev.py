@@ -1,7 +1,5 @@
 import pandas
 import numpy as np
-from tensorflow.keras.models import load_model
-import sys
 import os
 
 # Get the absolute path of the current file
@@ -24,7 +22,7 @@ preds_l_22 = []
 preds_l_3 = []
 preds_l_4 = []
 
-microcosm_par_range_list = ['0-15','1-16','2-17','3-17.5']
+microcosm_par_range_list = ['0-16','0.5-16.5','1-17','1.5-17.5']
 
 for p in range(len(microcosm_par_range_list)):
 
@@ -60,7 +58,7 @@ for p in range(len(thermoacoustic_par_range_list)):
     pred_dev_2 = (1-b_2)/k_2
     preds_l_22.append(pred_dev_2)
 
-Mo_par_range_list = ['160-142','159-141','158-140','157-139']
+Mo_par_range_list = ['160-140','159-139','158-138','157-137']
 
 for p in range(len(Mo_par_range_list)):
 
@@ -102,7 +100,7 @@ preds_l_22 = []
 preds_l_3 = []
 preds_l_4 = []
 
-microcosm_par_range_list = ['0-15','1-16','2-17','3-17.5']
+microcosm_par_range_list = ['0-16','0.5-16.5','1-17','1.5-17.5']
 
 for p in range(len(microcosm_par_range_list)):
 
@@ -158,7 +156,7 @@ for p in range(len(thermoacoustic_par_range_list)):
 
     preds_l_22.append(pred_dev_2)
 
-Mo_par_range_list = ['160-142','159-141','158-140','157-139']
+Mo_par_range_list = ['160-140','159-139','158-138','157-137']
 
 for p in range(len(Mo_par_range_list)):
 

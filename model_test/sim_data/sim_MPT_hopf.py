@@ -46,7 +46,7 @@ os.chdir(current_dir)
 dt = 0.01
 t0 = 0
 tburn = 500 # burn-in period
-numSims = 20
+numSims = 50
 seed = 0 # random number generation seed
 sigma_x = 0.01 # noise intensity
 sigma_y = 0.01
@@ -136,10 +136,10 @@ for i in np.linspace(0,0.3,11):
         equiy0 = 0
         equiz0 = 0
 
-        ac = random.uniform(0.3,1)
+        ac = random.uniform(-1,1)
         
         tmax = int(np.random.uniform(250,500)) # randomly selected sequence length
-        n_random = np.random.uniform(100,500) # length of the randomly selected sequence to the bifurcation
+        n_random = np.random.uniform(5,500) # length of the randomly selected sequence to the bifurcation
         series_len = tmax + int(n_random)
 
         t = np.arange(t0,sim_len,dt)
@@ -264,6 +264,23 @@ for i in np.linspace(0,0.3,11):
         df_temp_1.set_index('Time', inplace=True)
         df_cut_1 = df_temp_1.iloc[0:tmax].copy()
 
+        # Get the minimum and maximum values of the original 'u' column
+        u_min = df_cut_1['u'].min()
+        u_max = df_cut_1['u'].max()
+
+        # Create a new uniformly distributed 'u' column
+        new_u_values = np.linspace(u_min, u_max, tmax)
+
+        # Interpolate the 'State variable'
+        interpolated_x_values = np.interp(new_u_values, df_cut_1['u'], df_cut_1['x'])
+        interpolated_y_values = np.interp(new_u_values, df_cut_1['u'], df_cut_1['y'])
+        interpolated_z_values = np.interp(new_u_values, df_cut_1['u'], df_cut_1['z'])
+
+        df_cut_1['interpolated_x'] = interpolated_x_values
+        df_cut_1['interpolated_y'] = interpolated_y_values
+        df_cut_1['interpolated_z'] = interpolated_z_values
+        df_cut_1['interpolated_u'] = new_u_values
+
         df_temp_2 = df_temp.iloc[d2].copy() # regularly-sampled time series
         df_temp_2['Time'] = np.arange(0,series_len)
         df_temp_2.set_index('Time', inplace=True)
@@ -329,8 +346,8 @@ for i in np.linspace(0,0.3,11):
     print('\nBegin DEV computation\n')
 
     for i in range(numSims):
-        df_traj_x = df_traj1[df_traj1['tsid'] == i+1]['x']
-        df_traj_u = df_traj1[df_traj1['tsid'] == i+1]['u']
+        df_traj_x = df_traj1[df_traj1['tsid'] == i+1]['interpolated_x']
+        df_traj_u = df_traj1[df_traj1['tsid'] == i+1]['interpolated_u']
         rdf_x = pandas2ri.py2rpy(df_traj_x)
         rdf_u = pandas2ri.py2rpy(df_traj_u)
         globalenv['x_time_series'] = rdf_x
@@ -534,9 +551,9 @@ for i in np.linspace(0,0.3,11):
     print('\nBegin lag-1 autocorrelation red computation\n')
     # Compute lag-1 autocorrelation red for irregularly-sampled time series
     for i in range(numSims):
-        df_ews_temp = df_ews_1[(df_ews_1['tsid'] == i+1) & (df_ews_1['Variable'] == 'x')][['State variable','u']]
-        x = df_ews_temp['State variable']
-        u = df_ews_temp['u']
+        df_traj_temp = df_traj1[df_traj1['tsid'] == i+1][['interpolated_x','interpolated_u']]
+        x = df_traj_temp['interpolated_x']
+        u = df_traj_temp['interpolated_u']
         ac_r,u_ac = ac_red(x,u,rw)
         df_ac = pd.DataFrame(data=None,columns=['AC red','u'])
         df_ac['AC red'] = ac_r
@@ -548,9 +565,9 @@ for i in np.linspace(0,0.3,11):
         print('AC red for realisation '+str(i+1)+' complete')
 
     for i in range(numSims):
-        df_ews_temp = df_ews_2[(df_ews_2['tsid'] == i+1) & (df_ews_2['Variable'] == 'x')][['State variable','u']]
-        x = df_ews_temp['State variable']
-        u = df_ews_temp['u']
+        df_traj_temp = df_traj2[df_traj2['tsid'] == i+1][['x','u']]
+        x = df_traj_temp['x']
+        u = df_traj_temp['u']
         ac_r,u_ac = ac_red(x,u,rw)
         df_ac = pd.DataFrame(data=None,columns=['AC red','u'])
         df_ac['AC red'] = ac_r

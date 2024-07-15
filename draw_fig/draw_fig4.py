@@ -34,7 +34,7 @@ subplt = plt.subplot(1,2,1)
 
 df_swf = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_forward.csv')
 df_swr = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_reverse.csv')
-preds_sw = pd.read_csv('../model_results/sleep-wake.csv')
+preds_sw = pd.read_csv('../results/sleep-wake.csv')
 
 sw_forward_state = df_swf['v']
 sw_forward_parameter = df_swf['D']
@@ -103,7 +103,7 @@ subplt = plt.subplot(1,2,2)
 
 df_sbf = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_forward.csv')
 df_sbr = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_reverse.csv')
-preds_sb = pd.read_csv('../model_results/sprott_b.csv')
+preds_sb = pd.read_csv('../results/sprott_b.csv')
 
 sb_forward_state = df_sbf['z']
 sb_forward_parameter = df_sbf['k']
