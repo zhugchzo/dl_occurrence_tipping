@@ -52,7 +52,7 @@ The results in the paper are obtained from the following workflow:
    sbatch gen_train_set/decreased_bifurcation/combine_batches.slurm
     ```
 
-    This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at 6.2GB. Training datasets we used in manuscript are archived on Zenodo at https://zenodo.org/records/11125027.
+    This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at 6.2GB. Training datasets we used in manuscript are archived on Zenodo at https://zenodo.org/records/12725553.
 
 2. **Train the deep learning algorithm.** We train ten neural networks on the training set and report the performance of the model averaged over them. To train a single neural network on the training set of a index kk, run
 
