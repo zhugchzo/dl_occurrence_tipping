@@ -14,7 +14,7 @@ ts_len=500 # time series length
 
 
 # Run Python file to stack the label and group data
-/gs/home/by2109123/anaconda3/envs/comp/bin/python3 /gs/home/by2109123/gen_train_set/decreased_bifurcation/stack_labels_groups.py $num_batches $ts_len
+python3 /gen_train_set/decreased_bifurcation/stack_labels_groups.py $num_batches $ts_len
 
 # Move time series data from batches to combined directory
 mkdir -p output/ts_$ts_len/hopf/combined/output_resids

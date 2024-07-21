@@ -53,17 +53,17 @@ printf "\n\n"
 
 # Generate a model and output equi.csv, pars.csv
 echo Run gen_model.py
-/gs/home/by2109123/anaconda3/envs/comp/bin/python3 /gs/home/by2109123/gen_train_set/increased_bifurcation/gen_model.py
+python3 /gen_train_set/increased_bifurcation/gen_model.py
 
 # Copy AUTO model and constants files to batch-specific directory
-cp /gs/home/by2109123/gen_train_set/increased_bifurcation/c.model c.model
-cp /gs/home/by2109123/gen_train_set/increased_bifurcation/model.f90 model.f90
+cp /gen_train_set/increased_bifurcation/c.model c.model
+cp /gen_train_set/increased_bifurcation/model.f90 model.f90
 
 # Run bifurcation continuation using AUTO and output b.out files for each varied parameter
 # (Make sure AUTO runs using Python 2)
 echo Run run_cont.auto
 # This should not take more than 10 mins - if it does, cancel the run and create new model
-timeout 600 auto /gs/home/by2109123/gen_train_set/increased_bifurcation/run_cont.auto
+timeout 600 auto /gen_train_set/increased_bifurcation/run_cont.auto
 if [[ $? == 124 ]]
 then
     echo AUTO cancelled as it took over 10 minutes
@@ -77,7 +77,7 @@ rm -f model.f90
 # bifurcation point, and output 500 points prior to the transition.
 # Also run a null case where parameters are fixed.
 echo Run stoch_sims.py
-/gs/home/by2109123/anaconda3/envs/comp/bin/python3 /gs/home/by2109123/gen_train_set/increased_bifurcation/stoch_sims.py $hopf_count $fold_count $branch_count $bif_max $batch_num $ts_len
+python3 /gen_train_set/increased_bifurcation/stoch_sims.py $hopf_count $fold_count $branch_count $bif_max $batch_num $ts_len
 
 
 # Update counting variables
@@ -96,7 +96,7 @@ done
 
 # Convert label data and split into training, test, validation
 echo "Convert data to correct form for training"
-/gs/home/by2109123/anaconda3/envs/comp/bin/python3 /gs/home/by2109123/gen_train_set/increased_bifurcation/to_traindata.py $bif_max $batch_num
+python3 /gen_train_set/increased_bifurcation/to_traindata.py $bif_max $batch_num
 
 # Remove single value files
 rm hopf/output_values/value*
@@ -105,7 +105,7 @@ rm branch/output_values/value*
 
 # Compute residual dynamics after Lowess smoothing for each time series
 echo "Compute residuals"
-/gs/home/by2109123/anaconda3/envs/comp/bin/python3 /gs/home/by2109123/gen_train_set/increased_bifurcation/compute_resids.py $bif_max $batch_num
+python3 /gen_train_set/increased_bifurcation/compute_resids.py $bif_max $batch_num
 
 
 # End timer
@@ -114,4 +114,4 @@ runtime=$((end-start))
 echo "Job successfully finished in time of $runtime" seconds.
 
 # Change back to original directory
-cd /gs/home/by2109123/gen_train_set/increased_bifurcation/
+cd /gen_train_set/increased_bifurcation/
