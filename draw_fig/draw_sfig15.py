@@ -96,11 +96,21 @@ for p in range(len(thermoacoustic_par_range_list)):
 
     subplt = axs[p,0]
 
-    subplt.scatter(x_1,y_1,c='black',s=0.5)
-    subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
-    subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
-    subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)
-    subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
+    if p == 0:
+
+        subplt.scatter(x_1,y_1,c='black',s=0.5)
+        subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
+        subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
+        subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
+        subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)
+
+    else:
+
+        subplt.scatter(x_1,y_1,c='black',s=0.5)
+        subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
+        subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
+        subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)     
+        subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
 
     par_range_min = float(par_range.split('-')[0])
     par_range_max = float(par_range.split('-')[1])
