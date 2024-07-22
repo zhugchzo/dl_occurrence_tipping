@@ -114,7 +114,7 @@ ax.tick_params(axis='both', labelsize=15)
 handles = [legend_dl, legend_dl_u]
 labels = [h.get_label() for h in handles]
 
-subplt.set_title('Food Chain Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+subplt.set_title('Chaotic Food Chain Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
 left_title = ax.text(0.02, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
 subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
 
