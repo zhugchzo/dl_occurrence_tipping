@@ -1,6 +1,7 @@
 import pandas
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 import matplotlib.lines as mlines
 import os
 
@@ -13,216 +14,305 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-seq_len = 500
-font_0 = {'family':'Times New Roman','weight':'bold','size': 12}
-font_1 = {'family':'Times New Roman','weight':'normal','size': 10}
-font = {'family':'Times New Roman','weight':'normal','size': 12}
+numtest = 50
 
-df_dl = pandas.read_csv('../results/empirical_nus_results_dl.csv')
-df_ac = pandas.read_csv('../results/empirical_nus_results_ac.csv')
-df_dev = pandas.read_csv('../results/empirical_nus_results_dev.csv')
-df_null = pandas.read_csv('../results/empirical_nus_results_null.csv')
+plt.figure(figsize=(12,9))
 
-# dl
-preds_dl_1 = df_dl['preds_20'].values
-preds_dl_2 = df_dl['preds_21'].values
-preds_dl_3 = df_dl['preds_22'].values
+font = {'family':'Times New Roman','weight':'normal','size': 18}
+times_font = fm.FontProperties(family='Times New Roman', style='normal')
 
-preds_dl_1 = list(preds_dl_1)
-preds_dl_2 = list(preds_dl_2)
-preds_dl_3 = list(preds_dl_3)
+subplt = plt.subplot(3,2,1)
 
-# ac
-preds_ac_1 = df_ac['preds_20'].values
-preds_ac_2 = df_ac['preds_21'].values
-preds_ac_3 = df_ac['preds_22'].values
+df = pandas.read_csv('../results/may_fold_nus.csv')
+df_bl = df['bl']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-preds_ac_1 = list(preds_ac_1)
-preds_ac_2 = list(preds_ac_2)
-preds_ac_3 = list(preds_ac_3)
+df_u = pandas.read_csv('../results/may_fold_us.csv')
+df_dl_u = df_u['error_dl']
+df_dl_u_min = df_u['min_dl']
+df_dl_u_max = df_u['max_dl']
 
-# dev
-preds_dev_1 = df_dev['preds_20'].values
-preds_dev_2 = df_dev['preds_21'].values
-preds_dev_3 = df_dev['preds_22'].values
+bl_list = list(df_bl.values)
 
-preds_dev_1 = list(preds_dev_1)
-preds_dev_2 = list(preds_dev_2)
-preds_dev_3 = list(preds_dev_3)
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-# null model
-preds_null_1 = df_null['preds_20'].values
-preds_null_2 = df_null['preds_21'].values
-preds_null_3 = df_null['preds_22'].values
+error_list_dl_u = list(df_dl_u.values)
+error_list_dl_u_min = list(df_dl_u_min.values)
+error_list_dl_u_max = list(df_dl_u_max.values)
 
-preds_null_1 = list(preds_null_1)
-preds_null_2 = list(preds_null_2)
-preds_null_3 = list(preds_null_3)
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='Irregularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o')
 
+line_dl_u, = subplt.plot(bl_list, error_list_dl_u, color='darkorange', linewidth=1.5, label='Regularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_u_min, error_list_dl_u_max, color='darkorange', alpha=0.25, edgecolor='none')
+scatter_dl_u = subplt.scatter(bl_list, error_list_dl_u, color='darkorange', s=30, marker='x')
 
-title = ['A1','B1','C1','A2','B2','C2','A3','B3','C3','A4','B4','C4']
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Irregularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+legend_dl_u = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=5, label='Regularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
 
-fig, axs = plt.subplots(4, 3, figsize=(12, 9))
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.03,0.63)
+plt.yticks([0,0.3,0.6],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=2)
 
-thermoacoustic_par_range_list = ['0-1','0.05-1.05','0.1-1.1','0.15-1.15']
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl, legend_dl_u]
+labels = [h.get_label() for h in handles]
 
-for p in range(len(thermoacoustic_par_range_list)):
+subplt.set_title('May Harvesting Fold Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'a',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
 
-    par_range = thermoacoustic_par_range_list[p]
+subplt = plt.subplot(3,2,2)
 
-    preds_dl = preds_dl_1[p]
-    preds_ac = preds_ac_1[p]
-    preds_dev = preds_dev_1[p]
-    preds_null = preds_null_1[p]
+df = pandas.read_csv('../results/food_hopf_nus.csv')
+df_bl = df['kl']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-    txt_1 = open('../empirical_test/empirical_data/thermoacoustic_20mv.txt')
-    datalines_1 = txt_1.readlines()
+df_u = pandas.read_csv('../results/food_hopf_us.csv')
+df_dl_u = df_u['error_dl']
+df_dl_u_min = df_u['min_dl']
+df_dl_u_max = df_u['max_dl']
 
-    dataset_1 = []
+bl_list = list(df_bl.values)
 
-    for data in datalines_1:
-        data = data.strip().split('\t')
-        dataset_1.append(data)
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-    for data in dataset_1:
-        data[0]=(float(data[0])-3.65630914691268160E+9)*0.02
-        data[1]=float(data[1])*1000/0.2175
+error_list_dl_u = list(df_dl_u.values)
+error_list_dl_u_min = list(df_dl_u_min.values)
+error_list_dl_u_max = list(df_dl_u_max.values)
 
-    dataset_1 = np.array(dataset_1)
-    dataset_1 = dataset_1[::200]
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='Irregularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o')
 
-    x_1 = dataset_1[:,0]
-    y_1 = dataset_1[:,1]
+line_dl_u, = subplt.plot(bl_list, error_list_dl_u, color='darkorange', linewidth=1.5, label='Regularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_u_min, error_list_dl_u_max, color='darkorange', alpha=0.25, edgecolor='none')
+scatter_dl_u = subplt.scatter(bl_list, error_list_dl_u, color='darkorange', s=30, marker='x')
 
-    subplt = axs[p,0]
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Irregularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+legend_dl_u = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=5, label='Regularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
 
-    if p == 0:
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.03,0.63)
+plt.yticks([0,0.3,0.6],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=2)
 
-        subplt.scatter(x_1,y_1,c='black',s=0.5)
-        subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
-        subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
-        subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
-        subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)
+handles = [legend_dl, legend_dl_u]
+labels = [h.get_label() for h in handles]
 
-    else:
+subplt.set_title('Chaotic Food Chain Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
 
-        subplt.scatter(x_1,y_1,c='black',s=0.5)
-        subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
-        subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
-        subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)     
-        subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
+subplt = plt.subplot(3,2,3)
 
-    par_range_min = float(par_range.split('-')[0])
-    par_range_max = float(par_range.split('-')[1])
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
+df = pandas.read_csv('../results/cr_branch_nus.csv')
+df_bl = df['al']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-    subplt.set_title(title[1+3*p-1],loc='left')
-    subplt.set_xticks([par_range_min,par_range_max,2.4])
-    subplt.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        subplt.set_xlabel('Voltage (20mV/s)',font_0)
-    subplt.set_ylabel('Acoustic pressure (Pa)',font)
+df_u = pandas.read_csv('../results/cr_branch_us.csv')
+df_dl_u = df_u['error_dl']
+df_dl_u_min = df_u['min_dl']
+df_dl_u_max = df_u['max_dl']
 
-for p in range(len(thermoacoustic_par_range_list)):
+bl_list = list(df_bl.values)
 
-    par_range = thermoacoustic_par_range_list[p]
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-    preds_dl = preds_dl_2[p]
-    preds_ac = preds_ac_2[p]
-    preds_dev = preds_dev_2[p]
-    preds_null = preds_null_2[p]
+error_list_dl_u = list(df_dl_u.values)
+error_list_dl_u_min = list(df_dl_u_min.values)
+error_list_dl_u_max = list(df_dl_u_max.values)
 
-    txt_2 = open('../empirical_test/empirical_data/thermoacoustic_40mv.txt')
-    datalines_2 = txt_2.readlines()
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='Irregularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o')
 
-    dataset_2 = []
+line_dl_u, = subplt.plot(bl_list, error_list_dl_u, color='darkorange', linewidth=1.5, label='Regularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_u_min, error_list_dl_u_max, color='darkorange', alpha=0.25, edgecolor='none')
+scatter_dl_u = subplt.scatter(bl_list, error_list_dl_u, color='darkorange', s=30, marker='x')
 
-    for data in datalines_2:
-        data = data.strip().split('\t')
-        dataset_2.append(data)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Irregularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+legend_dl_u = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=5, label='Regularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
 
-    for data in dataset_2:
-        data[0]=(float(data[0])-3.65629963087196300E+9)*0.04
-        data[1]=float(data[1])*1000/0.2175
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.05,1.05)
+plt.yticks([0,0.5,1],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=2)
 
-    dataset_2 = np.array(dataset_2)
-    dataset_2 = dataset_2[::100]
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl, legend_dl_u]
+labels = [h.get_label() for h in handles]
 
-    x_2 = dataset_2[:,0]
-    y_2 = dataset_2[:,1]
+subplt.set_title('Consumer Resource Transcritical Model (2D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'c',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
 
-    subplt = axs[p,1]
+subplt = plt.subplot(3,2,4)
 
-    subplt.scatter(x_2,y_2,c='black',s=0.5)
-    subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
-    subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
-    subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
-    subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)
+df = pandas.read_csv('../results/global_fold_nus.csv')
+df_bl = df['ul']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-    par_range_min = float(par_range.split('-')[0])
-    par_range_max = float(par_range.split('-')[1])
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
+df_u = pandas.read_csv('../results/global_fold_us.csv')
+df_dl_u = df_u['error_dl']
+df_dl_u_min = df_u['min_dl']
+df_dl_u_max = df_u['max_dl']
 
-    subplt.set_title(title[2+3*p-1],loc='left')
-    subplt.set_xticks([par_range_min,par_range_max,2.4])
-    subplt.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        subplt.set_xlabel('Voltage (40mV/s)',font_0)
-    subplt.set_ylabel('Acoustic pressure (Pa)',font)
+bl_list = list(df_bl.values)
 
-for p in range(len(thermoacoustic_par_range_list)):
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-    par_range = thermoacoustic_par_range_list[p]
+error_list_dl_u = list(df_dl_u.values)
+error_list_dl_u_min = list(df_dl_u_min.values)
+error_list_dl_u_max = list(df_dl_u_max.values)
 
-    preds_dl = preds_dl_3[p]
-    preds_ac = preds_ac_3[p]
-    preds_dev = preds_dev_3[p]
-    preds_null = preds_null_3[p]
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='Irregularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o')
 
-    txt_3 = open('../empirical_test/empirical_data/thermoacoustic_60mv.txt')
-    datalines_3 = txt_3.readlines()
+line_dl_u, = subplt.plot(bl_list, error_list_dl_u, color='darkorange', linewidth=1.5, label='Regularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_u_min, error_list_dl_u_max, color='darkorange', alpha=0.25, edgecolor='none')
+scatter_dl_u = subplt.scatter(bl_list, error_list_dl_u, color='darkorange', s=30, marker='x')
 
-    dataset_3 = []
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Irregularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+legend_dl_u = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=5, label='Regularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
 
-    for data in datalines_3:
-        data = data.strip().split('\t')
-        dataset_3.append(data)
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.1,2.1)
+plt.yticks([0,1,2],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=2)
 
-    for data in dataset_3:
-        data[0]=(float(data[0])-3.65630991104181150E+9)*0.06
-        data[1]=float(data[1])*1000/0.2175
+handles = [legend_dl, legend_dl_u]
+labels = [h.get_label() for h in handles]
 
-    dataset_3 = np.array(dataset_3)
-    dataset_3 = dataset_3[::65]
+subplt.set_title('Global Energy Balance Fold Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'d',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
 
-    x_3 = dataset_3[:,0]
-    y_3 = dataset_3[:,1]
+subplt = plt.subplot(3,2,5)
 
-    subplt = axs[p,2]
+df = pandas.read_csv('../results/MPT_hopf_nus.csv')
+df_bl = df['ul']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-    subplt.scatter(x_3,y_3,c='black',s=0.5)
-    subplt.axvline(preds_dl,color='crimson',linestyle='--',label='DL Algorithm')
-    subplt.axvline(preds_ac,color='royalblue',linestyle='-.',label='Degenerate Fingerprinting',alpha=0.9)
-    subplt.axvline(preds_dev,color='forestgreen',linestyle='-.',label='DEV',alpha=0.9)
-    subplt.axvline(preds_null,color='blueviolet',linestyle=':',label='Null Model',alpha=0.9)
+df_u = pandas.read_csv('../results/MPT_hopf_us.csv')
+df_dl_u = df_u['error_dl']
+df_dl_u_min = df_u['min_dl']
+df_dl_u_max = df_u['max_dl']
 
-    par_range_min = float(par_range.split('-')[0])
-    par_range_max = float(par_range.split('-')[1])
-    for i in np.linspace(par_range_min,par_range_max,500):
-        subplt.axvline(i,color='silver',alpha=0.02)
+bl_list = list(df_bl.values)
 
-    subplt.set_title(title[3+3*p-1],loc='left')
-    subplt.set_xticks([par_range_min,par_range_max,2.4])
-    subplt.tick_params(axis='both', labelsize=10)
-    if p == 3:
-        subplt.set_xlabel('Voltage (60mV/s)',font_0)
-    subplt.set_ylabel('Acoustic pressure (Pa)',font)
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-plt.subplots_adjust(top=0.93, bottom=0.055, left=0.07, right=0.99, hspace=0.4, wspace=0.5)
+error_list_dl_u = list(df_dl_u.values)
+error_list_dl_u_min = list(df_dl_u_min.values)
+error_list_dl_u_max = list(df_dl_u_max.values)
 
-handles, labels = axs[0, 0].get_legend_handles_labels()
-fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,1), ncol=4, frameon=False, fontsize=12)
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='Irregularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o')
 
+line_dl_u, = subplt.plot(bl_list, error_list_dl_u, color='darkorange', linewidth=1.5, label='Regularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_u_min, error_list_dl_u_max, color='darkorange', alpha=0.25, edgecolor='none')
+scatter_dl_u = subplt.scatter(bl_list, error_list_dl_u, color='darkorange', s=30, marker='x')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Irregularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+legend_dl_u = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=5, label='Regularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.03,0.63)
+plt.yticks([0,0.3,0.6],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=2)
+
+plt.xlabel('Initial parameter',font)
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl, legend_dl_u]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Middle Pleistocene Transition Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'e',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
+
+subplt = plt.subplot(3,2,6)
+
+df = pandas.read_csv('../results/amazon_branch_nus.csv')
+df_bl = df['pl']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+df_u = pandas.read_csv('../results/amazon_branch_us.csv')
+df_dl_u = df_u['error_dl']
+df_dl_u_min = df_u['min_dl']
+df_dl_u_max = df_u['max_dl']
+
+bl_list = list(df_bl.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+error_list_dl_u = list(df_dl_u.values)
+error_list_dl_u_min = list(df_dl_u_min.values)
+error_list_dl_u_max = list(df_dl_u_max.values)
+
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='Irregularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o')
+
+line_dl_u, = subplt.plot(bl_list, error_list_dl_u, color='darkorange', linewidth=1.5, label='Regularly-Sampled Data')
+subplt.fill_between(bl_list, error_list_dl_u_min, error_list_dl_u_max, color='darkorange', alpha=0.25, edgecolor='none')
+scatter_dl_u = subplt.scatter(bl_list, error_list_dl_u, color='darkorange', s=30, marker='x')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Irregularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+legend_dl_u = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=5, label='Regularly-Sampled Data', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.03,0.63)
+plt.yticks([0,0.3,0.6],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=2)
+
+plt.xlabel('Initial parameter',font)
+handles = [legend_dl, legend_dl_u]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Amazon Rainforest Dieback Transcritical Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'f',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
+
+plt.tight_layout()
 plt.savefig('../figures/SFIG15.png',dpi=600)

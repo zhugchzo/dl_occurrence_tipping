@@ -246,7 +246,7 @@ labels = [h.get_label() for h in handles]
 
 subplt.set_title('Consumer Resource Transcritical Model (2D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
 left_title = ax.text(0.02, 1.05,'c',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
-subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':10})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
 subplt = plt.subplot(3,2,4)
 
