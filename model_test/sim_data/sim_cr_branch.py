@@ -105,7 +105,7 @@ m = 0.5*sf
 
 abif = 5.88 # bifurcation point (computed in Mathematica)
 ah = 1.2*abif # control parameter final value
-c_rate = 8.112e-5 # bifurcation parameter change rate
+c_rate = 8.112e-5 # change in the bifurcation parameter in dt
 
 for i in np.linspace(0*sf,1.25*sf,11):
 

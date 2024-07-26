@@ -31,7 +31,7 @@ random.seed(datetime.now())
 kk_num = int(sys.argv[1]) # index for neutral network
 single_train_numbers = 25000 # volume of training data for each changing direction of parameter (increase / decrease), noise type (white / red) and bifurcation type (fold / hopf / transcritical (branch))
 seq_len = 500  # length of input time series
-pad_left = 250 # padding length of input time series
+pad_left = 250 # zero outing length of input time series
 
 set_size = int(single_train_numbers)+1  # set to size of time series library plus 1
 train_numbers = int(single_train_numbers)*12 # volume of training data 25000*12

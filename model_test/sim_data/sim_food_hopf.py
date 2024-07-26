@@ -113,7 +113,7 @@ c_0 = 0.5
 
 kbif = 0.5 # bifurcation point (computed in Mathematica)
 kh = 1.2*kbif # bifurcation parameter high
-c_rate = 1.54e-5 # bifurcation parameter change rate
+c_rate = 1.54e-5 # change in the bifurcation parameter in dt
 
 for i in np.linspace(0.2,0.4,11):
     

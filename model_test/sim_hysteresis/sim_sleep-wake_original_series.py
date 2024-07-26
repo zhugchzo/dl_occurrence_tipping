@@ -86,7 +86,7 @@ sigma = 3
 
 Dl = 0.1
 Dh = 1.9
-D_rate = 0.5/3600 # rate: delta D/s
+D_rate = 0.5/3600 # rate: delta D in a unit time
 
 sim_len = int((Dh-Dl)/D_rate)
 

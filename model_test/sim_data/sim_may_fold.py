@@ -81,7 +81,7 @@ s = 0.1 # half-saturation constant of harvesting function
 
 bcrit = 0.260437 # bifurcation point (computed in Mathematica)
 bh = 1.2*bcrit # bifurcation parameter high
-c_rate = 6.25e-6 # bifurcation parameter change rate
+c_rate = 6.25e-6 # change in the bifurcation parameter in dt
 
 for i in np.linspace(0,0.2,11):
 

@@ -84,7 +84,7 @@ g = 0.004
 
 pbif = 0.004 # bifurcation point (computed in Mathematica)
 ph = -0.1  # bifurcation parameter high
-c_rate = -2.4e-5 # bifurcation parameter change rate
+c_rate = -2.4e-5 # change in the bifurcation parameter in dt
 
 for i in np.linspace(0.9,0.1,11):
     

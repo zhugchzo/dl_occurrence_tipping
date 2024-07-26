@@ -109,7 +109,7 @@ s = 0.8
 #ul = 0
 ubif = 0.35 # bifurcation point (computed in Mathematica)
 uh = 1.2*ubif # bifurcation parameter high
-c_rate = 8.4e-6 # bifurcation parameter change rate
+c_rate = 8.4e-6 # change in the bifurcation parameter in dt
 
 for i in np.linspace(0,0.3,11):
     

@@ -87,7 +87,7 @@ e_SA = 0.69
 
 ucrit = 0.9621 # bifurcation point (computed in Mathematica)
 uh = 0.9  # bifurcation parameter high
-c_rate = -6e-7 # bifurcation parameter change rate
+c_rate = -6e-7 # change in the bifurcation parameter in dt
 
 for i in np.linspace(1.4,1.2,11):
 

@@ -85,7 +85,7 @@ beta = 5
 
 kl = math.pi
 kh = 2*math.pi
-k_rate = math.pi/1000
+k_rate = math.pi/1000 # rate: delta k in a unit time
 
 sim_len = int((kh-kl)/k_rate)
 tmax = 500
