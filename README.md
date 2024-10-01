@@ -99,9 +99,7 @@ The results in the paper are obtained from the following workflow:
    ```python
    python ./model_test/test_data_nus/may_fold.py
    ```
-
-   The code for generating predictions by null model and combined model is also included in `test_data_nus/may_fold.py`. The same file notation is used for the time series generated from other models.
-
+   
    For predictions of empirical time series, the code to test on two empirical examples are availalble in the directory `./empirical_test/test_empirical_data/`. For example, to apply the deep learning algorithm on cyanobacteria microcosm data with different initial values of the light irradiance, run
    
    ```python
