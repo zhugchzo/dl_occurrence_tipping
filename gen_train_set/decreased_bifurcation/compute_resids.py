@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on May 4 2024
+Created on Sun Aug 25 19:29:10 2019
 
-@author: Chengzuo Zhuge
-
-Modified by: Thomas M. Bury
+@author: tbury
 
 Compute residual dynamics from Lowess smoothing for each time series
 generated for training data
@@ -43,32 +41,21 @@ while os.path.isfile('hopf/output_sims/white_tseries'+str(i)+'.csv'):
     df_traj_red = pd.read_csv('hopf/output_sims/red_tseries'+str(i)+'.csv')
     
     # Compute EWS
-    dic_ews_white = ewstools.core.ews_compute(df_traj_white['xw'],
-                                        smooth = 'Lowess',
-                                        span = 0.2,
-                                        ews=[])
-    df_ews_white = dic_ews_white['EWS metrics']
-    df_resids_white = df_ews_white[['Residuals']]
+    dic_ews_white = ewstools.TimeSeries(data = df_traj_white['xw'])
+    dic_ews_white.detrend(method = 'Lowess', span = 0.2)
+    df_resids_white = pd.DataFrame(columns=['residuals', 'b'])
+    df_resids_white['residuals'] = dic_ews_white.state['residuals']
+    df_resids_white['b'] = df_traj_white['b']
 
-    dic_ews_red = ewstools.core.ews_compute(df_traj_red['xr'],
-                                        smooth = 'Lowess',
-                                        span = 0.2,
-                                        ews=[])
-    df_ews_red = dic_ews_red['EWS metrics']
-    df_resids_red = df_ews_red[['Residuals']]
-    
+    dic_ews_red = ewstools.TimeSeries(data = df_traj_red['xr'])
+    dic_ews_red.detrend(method = 'Lowess', span = 0.2)
+    df_resids_red = pd.DataFrame(columns=['residuals', 'b'])
+    df_resids_red['residuals'] = dic_ews_red.state['residuals']
+    df_resids_red['b'] = df_traj_red['b']
     
     # Output residual time-series
     df_resids_white.to_csv('hopf/output_resids/white_resids'+str(i)+'.csv')
     df_resids_red.to_csv('hopf/output_resids/red_resids'+str(i)+'.csv')
-
-    df_white = pd.read_csv('hopf/output_resids/white_resids'+str(i)+'.csv',index_col = 0)
-    df_white['b'] = df_traj_white[['b']]
-    df_white.to_csv('hopf/output_resids/white_resids'+str(i)+'.csv')
-
-    df_red = pd.read_csv('hopf/output_resids/red_resids'+str(i)+'.csv',index_col = 0)
-    df_red['b'] = df_traj_red[['b']]
-    df_red.to_csv('hopf/output_resids/red_resids'+str(i)+'.csv')
     
     if np.mod(i,100) == 0:
         print('Residuals for hopf trajectory {} complete'.format(i))
@@ -83,33 +70,22 @@ while os.path.isfile('fold/output_sims/white_tseries'+str(i)+'.csv'):
     df_traj_red = pd.read_csv('fold/output_sims/red_tseries'+str(i)+'.csv')
     
     # Compute EWS
-    dic_ews_white = ewstools.core.ews_compute(df_traj_white['xw'],
-                                        smooth = 'Lowess',
-                                        span = 0.2,
-                                        ews=[])
-    df_ews_white = dic_ews_white['EWS metrics']
-    df_resids_white = df_ews_white[['Residuals']]
+    dic_ews_white = ewstools.TimeSeries(data = df_traj_white['xw'])
+    dic_ews_white.detrend(method = 'Lowess', span = 0.2)
+    df_resids_white = pd.DataFrame(columns=['residuals', 'b'])
+    df_resids_white['residuals'] = dic_ews_white.state['residuals']
+    df_resids_white['b'] = df_traj_white['b']
 
-    dic_ews_red = ewstools.core.ews_compute(df_traj_red['xr'],
-                                        smooth = 'Lowess',
-                                        span = 0.2,
-                                        ews=[])
-    df_ews_red = dic_ews_red['EWS metrics']
-    df_resids_red = df_ews_red[['Residuals']]
-    
+    dic_ews_red = ewstools.TimeSeries(data = df_traj_red['xr'])
+    dic_ews_red.detrend(method = 'Lowess', span = 0.2)
+    df_resids_red = pd.DataFrame(columns=['residuals', 'b'])
+    df_resids_red['residuals'] = dic_ews_red.state['residuals']
+    df_resids_red['b'] = df_traj_red['b']
     
     # Output residual time-series
     df_resids_white.to_csv('fold/output_resids/white_resids'+str(i)+'.csv')
     df_resids_red.to_csv('fold/output_resids/red_resids'+str(i)+'.csv')
-    
-    df_white = pd.read_csv('fold/output_resids/white_resids'+str(i)+'.csv',index_col = 0)
-    df_white['b'] = df_traj_white[['b']]
-    df_white.to_csv('fold/output_resids/white_resids'+str(i)+'.csv')
-
-    df_red = pd.read_csv('fold/output_resids/red_resids'+str(i)+'.csv',index_col = 0)
-    df_red['b'] = df_traj_red[['b']]
-    df_red.to_csv('fold/output_resids/red_resids'+str(i)+'.csv')
-    
+       
     if np.mod(i,100) == 0:
         print('Residuals for fold trajectory {} complete'.format(i))
         
@@ -123,32 +99,21 @@ while os.path.isfile('branch/output_sims/white_tseries'+str(i)+'.csv'):
     df_traj_red = pd.read_csv('branch/output_sims/red_tseries'+str(i)+'.csv')
     
     # Compute EWS
-    dic_ews_white = ewstools.core.ews_compute(df_traj_white['xw'],
-                                        smooth = 'Lowess',
-                                        span = 0.2,
-                                        ews=[])
-    df_ews_white = dic_ews_white['EWS metrics']
-    df_resids_white = df_ews_white[['Residuals']]
+    dic_ews_white = ewstools.TimeSeries(data = df_traj_white['xw'])
+    dic_ews_white.detrend(method = 'Lowess', span = 0.2)
+    df_resids_white = pd.DataFrame(columns=['residuals', 'b'])
+    df_resids_white['residuals'] = dic_ews_white.state['residuals']
+    df_resids_white['b'] = df_traj_white['b']
 
-    dic_ews_red = ewstools.core.ews_compute(df_traj_red['xr'],
-                                        smooth = 'Lowess',
-                                        span = 0.2,
-                                        ews=[])
-    df_ews_red = dic_ews_red['EWS metrics']
-    df_resids_red = df_ews_red[['Residuals']]
-    
+    dic_ews_red = ewstools.TimeSeries(data = df_traj_red['xr'])
+    dic_ews_red.detrend(method = 'Lowess', span = 0.2)
+    df_resids_red = pd.DataFrame(columns=['residuals', 'b'])
+    df_resids_red['residuals'] = dic_ews_red.state['residuals']
+    df_resids_red['b'] = df_traj_red['b']
     
     # Output residual time-series
     df_resids_white.to_csv('branch/output_resids/white_resids'+str(i)+'.csv')
     df_resids_red.to_csv('branch/output_resids/red_resids'+str(i)+'.csv')
-    
-    df_white = pd.read_csv('branch/output_resids/white_resids'+str(i)+'.csv',index_col = 0)
-    df_white['b'] = df_traj_white[['b']]
-    df_white.to_csv('branch/output_resids/white_resids'+str(i)+'.csv')
-
-    df_red = pd.read_csv('branch/output_resids/red_resids'+str(i)+'.csv',index_col = 0)
-    df_red['b'] = df_traj_red[['b']]
-    df_red.to_csv('branch/output_resids/red_resids'+str(i)+'.csv')
 
     if np.mod(i,100) == 0:
         print('Residuals for branch trajectory {} complete'.format(i))

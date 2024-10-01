@@ -13,10 +13,7 @@ Draw the predicted results of the Sprot B model, hopf/hopf hysteresis bursting
 # import python libraries
 import numpy as np
 import pandas as pd
-import math
 import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
-from scipy.interpolate import interp1d
 import os
 
 # Get the absolute path of the current file
@@ -35,6 +32,12 @@ subplt = plt.subplot(1,2,1)
 df_swf = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_forward.csv')
 df_swr = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_reverse.csv')
 preds_sw = pd.read_csv('../results/sleep-wake.csv')
+
+initial_point_swf = []
+initial_point_swr = []
+
+ground_truth_swf = 1.15282788241984
+ground_truth_swr = 0.883226316248411
 
 sw_forward_state = df_swf['v']
 sw_forward_parameter = df_swf['D']
@@ -61,38 +64,50 @@ sw_forward_state_bottom = sw_forward_state[len(sw_forward_parameter_cover):]
 sw_reverse_state_cover = sw_reverse_state[:len(sw_reverse_parameter_cover)]
 sw_reverse_state_bottom = sw_reverse_state[len(sw_reverse_parameter_cover):]
 
-swf_pred = preds_sw['preds_f'].item()
-swr_pred = preds_sw['preds_r'].item()
+ss_swf = list(preds_sw['ssf_list'].values)
+ss_swr = list(preds_sw['ssr_list'].values)
+preds_dl_swf = list(preds_sw['preds_f_list'].values)
+preds_dl_swr = list(preds_sw['preds_r_list'].values)
 
-swf_s = preds_sw['f_start'].item()
-swf_o = preds_sw['f_over'].item()
-swr_s = preds_sw['r_start'].item()
-swr_o = preds_sw['r_over'].item()
+for ssf,ssr in zip(ss_swf,ss_swr):
+    df_swf = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/sleep-wake_forward_{}.csv'.format(ssf))
+    df_swr = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/sleep-wake_reverse_{}.csv'.format(ssr))
+
+    initial_xf = df_swf['v'].iloc[0]
+    initial_bf = df_swf['D'].iloc[0]    
+
+    initial_xr = df_swr['v'].iloc[0]
+    initial_br = df_swr['D'].iloc[0]
+
+    initial_point_swf.append([initial_bf,initial_xf])
+    initial_point_swr.append([initial_br,initial_xr])
 
 subplt.scatter(sw_forward_parameter_bottom,sw_forward_state_bottom,c='crimson',s=0.5)
 subplt.scatter(sw_reverse_parameter_bottom,sw_reverse_state_bottom,c='royalblue',s=0.5)
 subplt.scatter(sw_forward_parameter_cover,sw_forward_state_cover,c='crimson',s=0.5)
 subplt.scatter(sw_reverse_parameter_cover,sw_reverse_state_cover,c='royalblue',s=0.5)
 
-subplt.axvline(swf_pred,color='crimson',linestyle='--')
-subplt.axvline(swr_pred,color='royalblue',linestyle='--')
+subplt.axvline(ground_truth_swf,color='crimson',linestyle='--')
+subplt.axvline(ground_truth_swr,color='royalblue',linestyle='--')
 
-for i in np.linspace(swf_s,swf_o,500):
-    plt.axvline(i,color='silver',alpha=0.02)
-for i in np.linspace(swr_s,swr_o,500):
-    plt.axvline(i,color='silver',alpha=0.02)
+for i in range(len(ss_swf)):
 
-plt.xticks([swf_s,swf_o,swr_s,swr_o])
+    subplt.scatter(initial_point_swf[i][0],initial_point_swf[i][1], color='darkorange', s=24, marker='|', zorder=3)
+    subplt.scatter(preds_dl_swf[i],initial_point_swf[i][1], color='darkorange', s=12, marker='o', zorder=3)
+    subplt.plot([initial_point_swf[i][0],preds_dl_swf[i]],[initial_point_swf[i][1],initial_point_swf[i][1]], color='darkorange', linewidth=1, alpha=0.5)
+
+    subplt.scatter(initial_point_swr[i][0],initial_point_swr[i][1], color='darkorange', s=24, marker='|', zorder=3)
+    subplt.scatter(preds_dl_swr[i],initial_point_swr[i][1], color='darkorange', s=12, marker='o', zorder=3)
+    subplt.plot([initial_point_swr[i][0],preds_dl_swr[i]],[initial_point_swr[i][1],initial_point_swr[i][1]], color='darkorange', linewidth=1, alpha=0.5)
+
+plt.xticks([0.1, ground_truth_swr, ground_truth_swf, 1.9],['0.1', '0.883', '1.153', '1.9'],fontsize=10)
 plt.xlabel(r'$D$',fontsize=14)
 plt.ylabel(r'$V_v$',fontsize=14)
 
 ax = plt.gca()
 
-ax.annotate('', xy=(swf_o, -7.8), xytext=(swf_s, -7.8), arrowprops=dict(color='black', arrowstyle='->'))
-ax.annotate('', xy=(swr_o, -7.8), xytext=(swr_s, -7.8), arrowprops=dict(color='black', arrowstyle='->'))
-
-ax.annotate('', xy=(0.5, -7.15), xytext=(0.3, -7.5), arrowprops=dict(color='crimson', arrowstyle='->'))
-ax.annotate('', xy=(1.6, 1.55), xytext=(1.8,1.85), arrowprops=dict(color='royalblue', arrowstyle='->'))
+ax.annotate('', xy=(0.5, -6.15), xytext=(0.3, -6.5), arrowprops=dict(color='crimson', arrowstyle='->'))
+ax.annotate('', xy=(1.6, 0.55), xytext=(1.8,0.85), arrowprops=dict(color='royalblue', arrowstyle='->'))
 ax.annotate('', xy=(1.25, -2.5), xytext=(1.225, -3.5), arrowprops=dict(color='crimson', arrowstyle='->'))
 ax.annotate('', xy=(0.775, -3), xytext=(0.8,-2), arrowprops=dict(color='royalblue', arrowstyle='->'))
 
@@ -104,6 +119,12 @@ subplt = plt.subplot(1,2,2)
 df_sbf = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_forward.csv')
 df_sbr = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_reverse.csv')
 preds_sb = pd.read_csv('../results/sprott_b.csv')
+
+initial_point_sbf = []
+initial_point_sbr = []
+
+ground_truth_sbf = 4.58982161367064
+ground_truth_sbr = 4.83495634709873
 
 sb_forward_state = df_sbf['z']
 sb_forward_parameter = df_sbf['k']
@@ -130,35 +151,51 @@ sb_forward_state_bottom = sb_forward_state[len(sb_forward_parameter_cover):]
 sb_reverse_state_cover = sb_reverse_state[:len(sb_reverse_parameter_cover)]
 sb_reverse_state_bottom = sb_reverse_state[len(sb_reverse_parameter_cover):]
 
-sbf_pred = preds_sb['preds_f'].item()
-sbr_pred = preds_sb['preds_r'].item()
+ss_sbf = list(preds_sb['ssf_list'].values)
+ss_sbr = list(preds_sb['ssr_list'].values)
+preds_dl_sbf = list(preds_sb['preds_f_list'].values)
+preds_dl_sbr = list(preds_sb['preds_r_list'].values)
 
-sbf_s = preds_sb['f_start'].item()
-sbf_o = preds_sb['f_over'].item()
-sbr_s = preds_sb['r_start'].item()
-sbr_o = preds_sb['r_over'].item()
+for ssf,ssr in zip(ss_sbf,ss_sbr):
+    df_sbf = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/sprott_b_forward_{}.csv'.format(ssf))
+    df_sbr = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/sprott_b_reverse_{}.csv'.format(ssr))
+
+    initial_xf = df_sbf['z'].iloc[0]
+    initial_bf = df_sbf['k'].iloc[0]    
+
+    initial_xr = df_sbr['z'].iloc[0]
+    initial_br = df_sbr['k'].iloc[0]
+
+    initial_point_sbf.append([initial_bf,initial_xf])
+    initial_point_sbr.append([initial_br,initial_xr])
 
 subplt.scatter(sb_forward_parameter_bottom,sb_forward_state_bottom,c='crimson',s=0.5)
 subplt.scatter(sb_reverse_parameter_bottom,sb_reverse_state_bottom,c='royalblue',s=0.5)
 subplt.scatter(sb_forward_parameter_cover,sb_forward_state_cover,c='crimson',s=0.5)
 subplt.scatter(sb_reverse_parameter_cover,sb_reverse_state_cover,c='royalblue',s=0.5)
 
-subplt.axvline(sbf_pred,color='crimson',linestyle='--')
-subplt.axvline(sbr_pred,color='royalblue',linestyle='--')
+subplt.axvline(ground_truth_sbf,color='crimson',linestyle='--')
+subplt.axvline(ground_truth_sbr,color='royalblue',linestyle='--')
 
-for i in np.linspace(sbf_s,sbf_o,500):
-    subplt.axvline(i,color='silver',alpha=0.02)
-for i in np.linspace(sbr_s,sbr_o,500):
-    subplt.axvline(i,color='silver',alpha=0.02)
+for i in range(len(ss_sbf)):
 
-plt.xticks([np.pi, 1.3*np.pi, 1.7*np.pi, 2*np.pi],['$\pi$', '$1.3\pi$', '$1.7\pi$', '$2\pi$'])
+    subplt.scatter(initial_point_sbf[i][0],initial_point_sbf[i][1], color='darkorange', s=24, marker='|', zorder=3)
+    subplt.scatter(preds_dl_sbf[i],initial_point_sbf[i][1], color='darkorange', s=12, marker='o', zorder=3)
+    subplt.plot([initial_point_sbf[i][0],preds_dl_sbf[i]],[initial_point_sbf[i][1],initial_point_sbf[i][1]], color='darkorange', linewidth=1, alpha=0.5)
+
+    subplt.scatter(initial_point_sbr[i][0],initial_point_sbr[i][1], color='darkorange', s=24, marker='|', zorder=3)
+    subplt.scatter(preds_dl_sbr[i],initial_point_sbr[i][1], color='darkorange', s=12, marker='o', zorder=3)
+    subplt.plot([initial_point_sbr[i][0],preds_dl_sbr[i]],[initial_point_sbr[i][1],initial_point_sbr[i][1]], color='darkorange', linewidth=1, alpha=0.5)
+
+y_min, y_max = plt.ylim()
+
+plt.xticks([np.pi, 1.461*np.pi, 1.539*np.pi, 2*np.pi],['$\pi$', '', '', '$2\pi$'],fontsize=10)
+plt.text(1.41*3.14, y_min-0.8, '$1.461\pi$', fontsize=10, ha='center', va='center', color='black')
+plt.text(1.59*3.14, y_min-0.8, '$1.539\pi$', fontsize=10, ha='center', va='center', color='black')
 plt.xlabel(r'$k$',fontsize=14)
 plt.ylabel(r'$z$',fontsize=14)
 
 ax = plt.gca()
-
-ax.annotate('', xy=(sbf_o, -7.1), xytext=(sbf_s, -7.1), arrowprops=dict(facecolor='black', arrowstyle='->'))
-ax.annotate('', xy=(sbr_o, -7.1), xytext=(sbr_s, -7.1), arrowprops=dict(facecolor='black', arrowstyle='->'))
 
 ax.annotate('', xy=(3.768, -2), xytext=(3.454, -2.5), arrowprops=dict(color='crimson', arrowstyle='->'))
 ax.annotate('', xy=(5.652, -2), xytext=(5.966,-2.5), arrowprops=dict(color='royalblue', arrowstyle='->'))
@@ -167,6 +204,6 @@ subplt.set_title('Sprott B Hopf/Hopf Hysteresis Bursting (3D)',fontdict={'family
 left_title = ax.text(0, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
 
 plt.tight_layout()
-plt.savefig('../figures/FIG4.png',dpi=600)
+plt.savefig('../figures/FIG4.pdf',format='pdf',dpi=600)
 
 

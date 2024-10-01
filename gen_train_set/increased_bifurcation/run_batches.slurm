@@ -105,7 +105,7 @@ rm branch/output_values/value*
 
 # Compute residual dynamics after Lowess smoothing for each time series
 echo "Compute residuals"
-python3 /gen_train_set/increased_bifurcation/compute_resids.py $bif_max $batch_num
+/gs/home/by2109123/anaconda3/envs/comp/bin/python3 /gs/home/by2109123/gen_train_set/increased_bifurcation/compute_resids.py $bif_max $batch_num
 
 
 # End timer

@@ -17,13 +17,12 @@ from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.layers import Reshape
+from tensorflow.keras.layers import Input
 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
 from tensorflow.keras.callbacks import ModelCheckpoint
 from datetime import datetime
-
-from sklearn.metrics import r2_score
 
 random.seed(datetime.now())
 
@@ -31,7 +30,7 @@ random.seed(datetime.now())
 kk_num = int(sys.argv[1]) # index for neutral network
 single_train_numbers = 25000 # volume of training data for each changing direction of parameter (increase / decrease), noise type (white / red) and bifurcation type (fold / hopf / transcritical (branch))
 seq_len = 500  # length of input time series
-pad_left = 250 # zero outing length of input time series
+pad_left = 250 # padding length of input time series
 
 set_size = int(single_train_numbers)+1  # set to size of time series library plus 1
 train_numbers = int(single_train_numbers)*12 # volume of training data 25000*12
@@ -63,23 +62,23 @@ for i in range (1,set_size):
     df_branch_r_white = pandas.read_csv(zf_branch_r.open('output_resids/white_resids'+str(i)+'.csv'))
     df_branch_r_red = pandas.read_csv(zf_branch_r.open('output_resids/red_resids'+str(i)+'.csv'))
 
+    keep_col_white = ['residuals','b']
+    keep_col_red = ['residuals','b']
 
-    keep_col = ['Residuals','b']
+    new_fold_f_white = df_fold_f_white[keep_col_white]
+    new_fold_f_red = df_fold_f_red[keep_col_red]
+    new_fold_r_white = df_fold_r_white[keep_col_white]
+    new_fold_r_red = df_fold_r_red[keep_col_red]
 
-    new_fold_f_white = df_fold_f_white[keep_col]
-    new_fold_f_red = df_fold_f_red[keep_col]
-    new_fold_r_white = df_fold_r_white[keep_col]
-    new_fold_r_red = df_fold_r_red[keep_col]
+    new_hopf_f_white = df_hopf_f_white[keep_col_white]
+    new_hopf_f_red = df_hopf_f_red[keep_col_red]
+    new_hopf_r_white = df_hopf_r_white[keep_col_white]
+    new_hopf_r_red = df_hopf_r_red[keep_col_red]
 
-    new_hopf_f_white = df_hopf_f_white[keep_col]
-    new_hopf_f_red = df_hopf_f_red[keep_col]
-    new_hopf_r_white = df_hopf_r_white[keep_col]
-    new_hopf_r_red = df_hopf_r_red[keep_col]
-
-    new_branch_f_white = df_branch_f_white[keep_col]
-    new_branch_f_red = df_branch_f_red[keep_col]
-    new_branch_r_white = df_branch_r_white[keep_col]
-    new_branch_r_red = df_branch_r_red[keep_col]
+    new_branch_f_white = df_branch_f_white[keep_col_white]
+    new_branch_f_red = df_branch_f_red[keep_col_red]
+    new_branch_r_white = df_branch_r_white[keep_col_white]
+    new_branch_r_red = df_branch_r_red[keep_col_red]
 
     values_fold_f_white = new_fold_f_white.values
     values_fold_f_red = new_fold_f_red.values
@@ -263,16 +262,17 @@ learning_rate_param = 0.01
 dropout_percent = 0.1
 mem_cells = 40
 mem_cells2 = 60
-kernel_size_param = (8,2)
+kernel_size_param = (10,2)
 epoch_param = 200
 batch_param = 1024
 initializer_param = 'lecun_normal'
 
 model = Sequential()
 
+model.add(Input(shape=(seq_len, 2, 1)))
+
 # add layers
-model.add(Conv2D(filters=filters_param, kernel_size=kernel_size_param, activation='relu', padding='same',input_shape=(seq_len, 2, 1),
-kernel_initializer = initializer_param))
+model.add(Conv2D(filters=filters_param, kernel_size=kernel_size_param, activation='relu', padding='same',kernel_initializer = initializer_param))
     
 model.add(Dropout(dropout_percent))
 model.add(MaxPooling2D(pool_size=pool_size_param))
@@ -286,28 +286,10 @@ model.add(Dropout(dropout_percent))
 
 model.add(Dense(units=1, activation=None, kernel_initializer = initializer_param))
 
-a_name="best_model_"
-b_name = kk_num
-c_name = ".pkl"
-model_name = a_name+str(b_name)+c_name
+model_name = "best_model_"+str(kk_num)+".keras"
 
 # Set up optimiser
 adam = Adam(learning_rate=learning_rate_param)
 chk = ModelCheckpoint(model_name, monitor='val_mape', save_best_only=True, mode='min', verbose=1)
 model.compile(loss='mse', optimizer=adam, metrics=['mape'])
 model.fit(train, train_target, epochs=epoch_param, batch_size=batch_param, callbacks=[chk], validation_data=(validation,validation_target))
-
-test_target = pandas.DataFrame(test_target,columns=['times'])
-
-model_name = "best_model_"+str(kk_num)+".pkl"
-
-model = load_model(model_name)
-
-test_preds = model.predict(test)
-
-test_preds = pandas.DataFrame(test_preds,columns=['times'])
-
-pred_acc = r2_score(test_target,test_preds)
-
-result_acc = open('result.txt','a+')
-result_acc.write(str(pred_acc)+'\n')

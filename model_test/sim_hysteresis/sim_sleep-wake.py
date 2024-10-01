@@ -25,82 +25,74 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-# Simulation parameters
-tmax = 400
+trans = pd.read_csv('../data_hysteresis/sleep-wake_white/original series/sleep-wake_trans.csv')
+trans_f = trans['trans_time1'].iloc[0]
+trans_r = trans['trans_time2'].iloc[0]
 
-# EWS parameters
-dt2 = 1 # spacing between time-series for EWS computation
-rw = 0.25 # rolling window
-span = 0.2 # bandwidth
-lags = [1] # autocorrelation lag times
-ews = ['var','ac']
+data_f = pd.read_csv('../data_hysteresis/sleep-wake_white/original series/sleep-wake_forward.csv',index_col=0)
+data_r = pd.read_csv('../data_hysteresis/sleep-wake_white/original series/sleep-wake_reverse.csv',index_col=0)
 
-over_time = 432000 #两个方向采样的终止步长，参数序列增大或减小0.6
+start_f = data_f['D'].iloc[0]
+over_f = trans['trans_value1'].iloc[0]
+start_r = data_r['D'].iloc[0]
+over_r = trans['trans_value2'].iloc[0]
 
-data_f = pd.read_csv('../data_hysteresis/sleep-wake_white/original series/sleep-wake_forward.csv')
-data_r = pd.read_csv('../data_hysteresis/sleep-wake_white/original series/sleep-wake_reverse.csv')
+for bl in np.linspace(0.1,1.1,11):
 
-ts_f = np.arange(0,over_time)
-s_f = np.linspace(1,len(ts_f)-2,len(ts_f)-2)
-np.random.shuffle(s_f)
-s_f = list(np.sort(s_f[0:tmax-2]))
-s_f.insert(0,0)
-s_f.append(len(ts_f)-1)
+    bl = round(bl,2)
 
-ts_r = np.arange(0,over_time)
-s_r = np.linspace(1,len(ts_r)-2,len(ts_r)-2)
-np.random.shuffle(s_r)
-s_r = list(np.sort(s_r[0:tmax-2]))
-s_r.insert(0,0)
-s_r.append(len(ts_r)-1)
+    ts_start = int((bl-start_f)*trans_f/(over_f-start_f))
 
-f_sample = data_f.iloc[s_f].copy()
-r_sample = data_r.iloc[s_r].copy()
+    tmax = 400 # sequence length
+    n = np.random.uniform(4,400) # length of the randomly selected sequence to the bifurcation
+    series_len = tmax + int(n)
 
-f_sample['Time'] = np.arange(0,tmax)
-f_sample.set_index('Time', inplace=True)
-r_sample['Time'] = np.arange(0,tmax)
-r_sample.set_index('Time', inplace=True)
+    ts_f = np.arange(ts_start,trans_f)
+    s_f = np.linspace(ts_start+1,ts_start+len(ts_f)-2,len(ts_f)-2)
+    np.random.shuffle(s_f)
+    s_f = list(np.sort(s_f[0:series_len-2]))
+    s_f.insert(0,ts_start)
+    s_f.append(ts_start+len(ts_f)-1)
 
-f_traj = f_sample.copy()
-r_traj = r_sample.copy()
+    f_sample = data_f.iloc[s_f].copy()
+    f_tseries = f_sample.iloc[0:tmax].copy()
 
-# compute resids for forward time series
+    state_tseries = f_tseries['v']
+    ts = ewstools.TimeSeries(data=state_tseries)
+    ts.detrend(method='Lowess', span=0.2)
 
-var = 'v'
+    f_tseries['residuals_v'] = ts.state['residuals']
+    f_tseries['Time'] = np.arange(0,tmax)
+    f_tseries.set_index('Time', inplace=True)
 
-f_ews_dic = ewstools.core.ews_compute(f_traj[var], 
-                roll_window = rw,
-                smooth='Lowess',
-                span = span,
-                lag_times = lags, 
-                ews = ews)
+    f_tseries.to_csv('../data_hysteresis/sleep-wake_white/sleep-wake_forward_{}.csv'.format(bl))
 
-# The DataFrame of EWS
-f_ews = f_ews_dic['EWS metrics']
+for bl in np.linspace(1.9,0.9,11):
 
-# Include a column in the DataFrames for realisation number and variable
-f_ews['Variable'] = var
-f_ews['D'] = f_traj['D']
+    bl = round(bl,2)
 
-# compute resids for reverse time series
+    ts_start = int(abs((bl-start_r)*trans_r/(over_r-start_r)))
 
-r_ews_dic = ewstools.core.ews_compute(r_traj[var], 
-                roll_window = rw,
-                smooth='Lowess',
-                span = span,
-                lag_times = lags, 
-                ews = ews)
+    tmax = 400 # randomly selected sequence length
+    n = np.random.uniform(4,400) # length of the randomly selected sequence to the bifurcation
+    series_len = tmax + int(n)
 
-# The DataFrame of EWS
-r_ews = r_ews_dic['EWS metrics']
+    ts_r = np.arange(ts_start,trans_r)
+    s_r = np.linspace(ts_start+1,ts_start+len(ts_r)-2,len(ts_r)-2)
+    np.random.shuffle(s_r)
+    s_r = list(np.sort(s_r[0:series_len-2]))
+    s_r.insert(0,ts_start)
+    s_r.append(ts_start+len(ts_r)-1)
 
-# Include a column in the DataFrames for realisation number and variable
-r_ews['Variable'] = var
-r_ews['D'] = r_traj['D']
+    r_sample = data_r.iloc[s_r].copy()
+    r_tseries = r_sample.iloc[0:tmax].copy()
 
-f_ews = f_ews[['Residuals','D']]
-r_ews = r_ews[['Residuals','D']]
+    state_tseries = r_tseries['v']
+    ts = ewstools.TimeSeries(data=state_tseries)
+    ts.detrend(method='Lowess', span=0.2)
 
-f_ews.to_csv('../data_hysteresis/sleep-wake_white/sleep-wake_forward_{}.csv'.format(tmax))
-r_ews.to_csv('../data_hysteresis/sleep-wake_white/sleep-wake_reverse_{}.csv'.format(tmax))
+    r_tseries['residuals_v'] = ts.state['residuals']
+    r_tseries['Time'] = np.arange(0,tmax)
+    r_tseries.set_index('Time', inplace=True)
+
+    r_tseries.to_csv('../data_hysteresis/sleep-wake_white/sleep-wake_reverse_{}.csv'.format(bl))

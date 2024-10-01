@@ -119,7 +119,7 @@ for i in range(int(tburn/dt)):
     equiv10 = equiv10 + de_fun_v(equiv10,equim10,t_v,vm,Q_max,theta,sigma,d1[0])*dt
     equim10 = equim10 + de_fun_m(equiv10,equim10,t_m,mv,Q_max,theta,sigma,maQa)*dt
 
-rrate10 = recov_fun(v10,m10,t_v,t_m,vm,mv,Q_max,theta,sigma)
+rrate10 = recov_fun(equiv10,equim10,t_v,t_m,vm,mv,Q_max,theta,sigma)
 
 # Initial condition post burn-in period
 v1[0]=v10
@@ -181,7 +181,7 @@ for i in range(int(tburn/dt)):
     equiv20 = equiv20 + de_fun_v(equiv20,equim20,t_v,vm,Q_max,theta,sigma,d2[0])*dt
     equim20 = equim20 + de_fun_m(equiv20,equim20,t_m,mv,Q_max,theta,sigma,maQa)*dt
 
-rrate20 = recov_fun(v20,m20,t_v,t_m,vm,mv,Q_max,theta,sigma)
+rrate20 = recov_fun(equiv20,equim20,t_v,t_m,vm,mv,Q_max,theta,sigma)
 
 # Initial condition post burn-in period
 v2[0]=v20
