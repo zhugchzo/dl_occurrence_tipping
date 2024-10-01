@@ -6,7 +6,7 @@ This is the code repository to accompnay the article:
 
 # Requirements
 
-Python 3.7 is required. To install python package dependencies, use the command
+Python 3.10 is required. To install python package dependencies, use the command
 
 ``` setup
 pip install -r requirements.txt
@@ -24,13 +24,13 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 **./model_test:** Code to simulate, perform regular and irregular sampling, and compute residual time series for the test models, to compute early warning signals of competing algorithms in the regularly-sampled situation, and to test trained deep learning models on simulated model test time series. These include the May's harvesting model, three-species food chain model, consumer−resource model, global energy balance model, middle Pleistocene transition model, Amazon rainforest dieback model, sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. The model test time series data after sampling and computing residual we used in manuscript is also in this directory.
 
-**./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, to compute early warning signals of competing algorithms, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment, the thermoacoustic experiment and the metallic elements in sediment cores. The original empirical datasets and the empirical test time series data after sampling and computing residual we used in manuscript are also in this directory.
+**./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, to compute early warning signals of competing algorithms, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment and the thermoacoustic experiment. The original empirical datasets and the empirical test time series data after sampling and computing residual we used in manuscript are also in this directory.
 
 **./results:** Experimental results of the trained deep learning models on the model time series data and the empirical test time series data. Experimental results of the competing algorithms on the model time series data and the empirical test time series data.
 
 **./draw_fig:** Code to generate figures used in manuscript.
 
-**./figures:** Figures used in manuscript.
+**./figures:** Figures used in manuscript and supplementary information.
 
 # Workflow
 
@@ -102,12 +102,11 @@ The results in the paper are obtained from the following workflow:
 
    The code for generating predictions by null model and combined model is also included in `test_data_nus/may_fold.py`. The same file notation is used for the time series generated from other models.
 
-   For predictions of empirical time series, to test on all irregularly-sampled empirical time series used in manuscript, run
-
+   For predictions of empirical time series, the code to test on two empirical examples are availalble in the directory `./empirical_test/test_empirical_data/`. For example, to apply the deep learning algorithm on cyanobacteria microcosm data with different initial values of the light irradiance, run
+   
    ```python
-   python ./empirical_test/test_empirical_data/empirical_sum_dl.py
+   python ./empirical_test/test_empirical_data/microcosm_fold.py
    ```
-
    The results of predictions will be exported to the directory `./results/`. **If using your own data, it is important to detrend it using a Lowess filter with span 0.20 and perform the two preprocessing matters mentioned above.**
 
 # Data sources
@@ -117,8 +116,6 @@ The empirical data used in this study are available from the following sources:
 1. **Cyanobacterial population collapse** data is availalble in the text file `./empirical_test/empirical_data/microcosm.txt`. Data was collected by AJ Veraart et al. and was first published in [Veraart A J, Faassen E J, Dakos V, et al. Recovery rates reflect distance to a tipping point in a living system[J]. Nature, 2012, 481(7381): 357-359.](https://www.nature.com/articles/nature10723)
 
 2. **Thermoacoustic instability** data is availalble in the text files `./empirical_test/empirical_data/thermoacoustic_20mv.txt`, `./empirical_test/empirical_data/thermoacoustic_40mv.txt` and `./empirical_test/empirical_data/thermoacoustic_60mv.txt`. Data was collected by Induja Pavithran and R. I. Sujith and was first published in [Pavithran I, Sujith R I. Effect of rate of change of parameter on early warning signals for critical transitions[J]. Chaos: An Interdisciplinary Journal of Nonlinear Science, 2021, 31(1).](https://pubs.aip.org/aip/cha/article-abstract/31/1/013116/1059628/Effect-of-rate-of-change-of-parameter-on-early?redirectedFrom=fulltext)
-
-3. **Sedimentary archive** data is availalble in the text files `./empirical_test/empirical_data/hypoxia_64PE_Mo_fold.txt` and `./empirical_test/empirical_data/hypoxia_64PE_U_branch.txt`. Data was collected from the Mediterranean Sea and is available at the [PANGAEA](https://doi.pangaea.de/10.1594/PANGAEA.923197) data repository.
 
 # Acknowledgements
 
