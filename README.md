@@ -60,7 +60,7 @@ The results in the paper are obtained from the following workflow:
    python ./dl_model/DL_training.py $kk
    ```
 
-   This will export the trained model (including weights, biases and architecture) to the directory `./dl_model/`. We run this for kk in [1,2,...,10]. Taking kk as command line parameters allows training of multiple neural networks in parallel if one has access to mulitple CPUs. Time to train a single neural network using a CPU is approximately 72 hours. The same process can be used to train the null model as comparison for the DL model in manuscript, with the corresponding code also located in the directory `./dl_model/`.
+   This will export the trained model (including weights, biases and architecture) to the directory `./dl_model/`. We run this for kk in [1,2,...,10]. Taking kk as command line parameters allows training of multiple neural networks in parallel if one has access to mulitple CPUs. Time to train a single neural network using a CPU is approximately 72 hours. The same process can be used to train the LSTM in the ablation study, with the corresponding code also located in the directory `./dl_model/`.
  
 3. **Generate model time series for testing.** Simulate the model time series used to test the DL algorithm. Code to do this is available in `./model_test/`. For example, to simulate trajectories of May's harvesting model going through a fold bifurcation, and perform regular and irregular sampling for the trajectories, run
 
