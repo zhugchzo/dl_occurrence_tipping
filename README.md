@@ -22,13 +22,13 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 **./gen_train_set:** Code to generate training data for the deep learning algorithm.
 
-**./model_test:** Code to simulate, perform regular and irregular sampling, and compute residual time series for the test models, to compute early warning signals of competing algorithms in the regularly-sampled situation, and to test trained deep learning models on simulated model test time series. These include the May's harvesting model, three-species food chain model, consumer−resource model, global energy balance model, middle Pleistocene transition model, Amazon rainforest dieback model, sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. The model test time series data after sampling and computing residual we used in manuscript is also in this directory.
+**./model_test:** Code to simulate, perform regular and irregular sampling, and compute residual time series for the test models, to compute early warning signals of competing algorithms in the regularly-sampled situation, and to test trained deep learning models on simulated model test time series. These include the May's harvesting model, three-species food chain model, consumer−resource model, global energy balance model, middle Pleistocene transition model, Amazon rainforest dieback model, sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. The model test time series data after sampling and computing residuals we used in manuscript is also in this directory.
 
-**./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, to compute early warning signals of competing algorithms, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment and the thermoacoustic experiment. The original empirical datasets and the empirical test time series data after sampling and computing residual we used in manuscript are also in this directory.
+**./empirical_test:** Code to perform irregular sampling and compute residual time series for the empirical datasets, to compute early warning signals of competing algorithms, and to test trained deep learning models on empirical test time series. These include the cyanobacteria microcosm experiment and the thermoacoustic experiment. The original empirical datasets and the empirical test time series data after sampling and computing residuals we used in manuscript are also in this directory.
 
 **./results:** Experimental results of the trained deep learning models on the model time series data and the empirical test time series data. Experimental results of the competing algorithms on the model time series data and the empirical test time series data.
 
-**./draw_fig:** Code to generate figures used in manuscript.
+**./draw_fig:** Code to generate figures used in manuscript and supplementary information.
 
 **./figures:** Figures used in manuscript and supplementary information.
 
