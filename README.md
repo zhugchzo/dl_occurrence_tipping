@@ -20,6 +20,8 @@ The bifurcation continuation software AUTO-07P is required. Installation instruc
 
 **./dl_model:** Code to train the deep learning algorithm. And trained deep learning models used in manuscript.
 
+**./dl_model_SI:** Code to train the deep learning algorithm. And trained deep learning models used in supplementary information.
+
 **./gen_train_set:** Code to generate training data for the deep learning algorithm.
 
 **./model_test:** Code to simulate, perform regular and irregular sampling, and compute residual time series for the test models, to compute early warning signals of competing algorithms in the regularly-sampled situation, and to test trained deep learning models on simulated model test time series. These include the May's harvesting model, three-species food chain model, consumer−resource model, global energy balance model, middle Pleistocene transition model, Amazon rainforest dieback model, sleep-wake hysteresis loop model and Sprott B hysteresis bursting model. The model test time series data after sampling and computing residuals we used in manuscript is also in this directory.
@@ -52,7 +54,7 @@ The results in the paper are obtained from the following workflow:
    sbatch gen_train_set/decreased_bifurcation/combine_batches.slurm
     ```
 
-    This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at 6.2GB. Training datasets we used in manuscript are archived on Zenodo at https://zenodo.org/records/12725553.
+    This also stacks the labels.csv and groups.csv files, and compresses the folder containing the time series data. The final compressed output comes out at 6.2GB. Training datasets we used in manuscript are archived on Zenodo at [https://zenodo.org/records/13894933](https://zenodo.org/records/13894933).
 
 2. **Train the deep learning algorithm.** We train ten neural networks on the training set and report the performance of the model averaged over them. To train a single neural network on the training set of a index kk, run
 
