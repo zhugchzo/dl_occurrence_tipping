@@ -36,7 +36,7 @@ pad_left = 250 # padding length of input time series
 
 set_size = int(train_numbers)+1  # set to size of time series library plus 1
 
-zf_sup_pitchfork = zipfile.ZipFile('/gs/home/by2109123/gen_pitchfork/output/sup_pitchfork/combined/output_sims.zip')
+zf_sup_pitchfork = zipfile.ZipFile('/pitchfork/output/sup_pitchfork/combined/output_sims.zip')
 
 sequences = list()
 normalization = list()
@@ -70,7 +70,7 @@ for i in range(train_numbers):
     normalization[i][1] = normalization[i][1] - values_s
 
 # training labels file
-label_sup_pitchfork='/gs/home/by2109123/gen_pitchfork/output/sup_pitchfork/combined/values.csv'
+label_sup_pitchfork='/pitchfork/output/sup_pitchfork/combined/values.csv'
 targets_sup_pitchfork = pandas.read_csv(label_sup_pitchfork,header = 0)
 
 targets_value = []
@@ -85,7 +85,7 @@ for i in range(train_numbers):
 targets_value = np.array(targets_value)
 
 # train/validation/test split denotations
-groups_name='/gs/home/by2109123/gen_pitchfork/output/sup_pitchfork/combined/groups.csv'
+groups_name='/pitchfork/output/sup_pitchfork/combined/groups.csv'
 groups = pandas.read_csv(groups_name,header = 0)
 groups = groups.values[:,1]
 

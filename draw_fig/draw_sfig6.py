@@ -454,7 +454,7 @@ plt.yticks([0,0.3,0.6],fontproperties=times_font)
 ax = plt.gca()
 ax.tick_params(axis='both', labelsize=15)
 
-plt.xlabel('Initial parameter',font)
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
 plt.ylabel('Mean relative error',font)
 handles = [legend_1, legend_2, legend_3, legend_4, legend_5]
 labels = [h.get_label() for h in handles]
@@ -545,7 +545,7 @@ plt.gca().invert_xaxis()
 ax = plt.gca()
 ax.tick_params(axis='both', labelsize=15)
 
-plt.xlabel('Initial parameter',font)
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
 handles = [legend_1, legend_2, legend_3, legend_4, legend_5]
 labels = [h.get_label() for h in handles]
 
@@ -553,6 +553,6 @@ subplt.set_title('Amazon Rainforest Dieback Transcritical Model (1D)',fontdict={
 left_title = ax.text(0.02, 1.05,'f',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
 subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10},ncol=2)
 
-plt.tight_layout()
+plt.subplots_adjust(top=0.96, bottom=0.075, left=0.055, right=0.99, hspace=0.32, wspace=0.08)
 plt.savefig('../figures/SFIG6.pdf',format='pdf',dpi=600)
 

@@ -20,7 +20,7 @@ times_font = fm.FontProperties(family='Times New Roman', style='normal')
 
 subplt = plt.subplot(3,2,1)
 
-df = pandas.read_csv('../results/may_fold/may_fold_bl_nus.csv')
+df = pandas.read_csv('../results/may_fold/may_fold_bl_us.csv')
 
 df_bl = df['bl']
 
@@ -85,9 +85,8 @@ plt.ylim(-0.2,4.2)
 plt.yticks([0,2,4],fontproperties=times_font)
 ax = plt.gca()
 ax.tick_params(axis='both', labelsize=15)
-#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
 
-plt.ylabel('Mean relative error',font)
+plt.ylabel('Mean relative error',font,labelpad=13)
 handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
 labels = [h.get_label() for h in handles]
 
@@ -97,7 +96,7 @@ subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
 subplt = plt.subplot(3,2,2)
 
-df = pandas.read_csv('../results/food_hopf/food_hopf_kl_nus.csv')
+df = pandas.read_csv('../results/food_hopf/food_hopf_kl_us.csv')
 
 df_kl = df['kl']
 
@@ -173,7 +172,7 @@ subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
 subplt = plt.subplot(3,2,3)
 
-df = pandas.read_csv('../results/cr_branch/cr_branch_al_nus.csv')
+df = pandas.read_csv('../results/cr_branch/cr_branch_al_us.csv')
 
 df_al = df['al']
 
@@ -250,7 +249,7 @@ subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
 subplt = plt.subplot(3,2,4)
 
-df = pandas.read_csv('../results/global_fold/global_fold_ul_nus.csv')
+df = pandas.read_csv('../results/global_fold/global_fold_ul_us.csv')
 
 df_ul = df['ul']
 
@@ -327,7 +326,7 @@ subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
 subplt = plt.subplot(3,2,5)
 
-df = pandas.read_csv('../results/MPT_hopf/MPT_hopf_ul_nus.csv')
+df = pandas.read_csv('../results/MPT_hopf/MPT_hopf_ul_us.csv')
 
 df_ul = df['ul']
 
@@ -394,8 +393,8 @@ ax = plt.gca()
 ax.tick_params(axis='both', labelsize=15)
 #act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
 
-plt.xlabel('Initial parameter',font)
-plt.ylabel('Mean relative error',font)
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
+plt.ylabel('Mean relative error',font,labelpad=13)
 handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
 labels = [h.get_label() for h in handles]
 
@@ -405,7 +404,7 @@ subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
 subplt = plt.subplot(3,2,6)
 
-df = pandas.read_csv('../results/amazon_branch/amazon_branch_pl_nus.csv')
+df = pandas.read_csv('../results/amazon_branch/amazon_branch_pl_us.csv')
 
 df_pl = df['pl']
 
@@ -473,7 +472,7 @@ ax = plt.gca()
 ax.tick_params(axis='both', labelsize=15)
 #act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
 
-plt.xlabel('Initial parameter',font)
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
 handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
 labels = [h.get_label() for h in handles]
 
@@ -481,6 +480,6 @@ subplt.set_title('Amazon Rainforest Dieback Transcritical Model (1D)',fontdict={
 left_title = ax.text(0.02, 1.05,'f',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
 subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
-plt.tight_layout()
+plt.subplots_adjust(top=0.96, bottom=0.075, left=0.055, right=0.99, hspace=0.32, wspace=0.08)
 plt.savefig('../figures/FIG3.pdf',format='pdf',dpi=600)
 

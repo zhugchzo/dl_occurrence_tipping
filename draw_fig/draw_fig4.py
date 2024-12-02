@@ -1,19 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on: March 22, 2024
-
-@author: Zhuge Chengzuo
-
-Draw the predicted results of the sleep-wake model, fold/fold hysteresis loop
-Draw the predicted results of the Sprot B model, hopf/hopf hysteresis bursting
-
-"""
-
-# import python libraries
-import numpy as np
-import pandas as pd
+import pandas
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import matplotlib.lines as mlines
 import os
 
 # Get the absolute path of the current file
@@ -25,185 +13,474 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-plt.figure(figsize=(10,4))
+plt.figure(figsize=(12,9))
 
-subplt = plt.subplot(1,2,1)
+font = {'family':'Times New Roman','weight':'normal','size': 18}
+times_font = fm.FontProperties(family='Times New Roman', style='normal')
 
-df_swf = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_forward.csv')
-df_swr = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/original series/sleep-wake_reverse.csv')
-preds_sw = pd.read_csv('../results/sleep-wake.csv')
+subplt = plt.subplot(3,2,1)
 
-initial_point_swf = []
-initial_point_swr = []
+df = pandas.read_csv('../results/may_fold/may_fold_bl_nus.csv')
 
-ground_truth_swf = 1.15282788241984
-ground_truth_swr = 0.883226316248411
+df_bl = df['bl']
 
-sw_forward_state = df_swf['v']
-sw_forward_parameter = df_swf['D']
-sw_reverse_state = df_swr['v']
-sw_reverse_parameter = df_swr['D']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-sw_forward_state = sw_forward_state[::100]
-sw_forward_parameter = sw_forward_parameter[::100]
-sw_reverse_state = sw_reverse_state[::100]
-sw_reverse_parameter = sw_reverse_parameter[::100]
+df_ac = df['error_ac']
+df_ac_min = df['min_ac']
+df_ac_max = df['max_ac']
 
-sw_forward_state = sw_forward_state.values
-sw_forward_parameter = sw_forward_parameter.values
-sw_reverse_state = sw_reverse_state.values
-sw_reverse_parameter = sw_reverse_parameter.values
+df_dev = df['error_dev']
+df_dev_min = df['min_dev']
+df_dev_max = df['max_dev']
 
-sw_forward_parameter_cover = sw_forward_parameter[sw_forward_parameter < 1]
-sw_forward_parameter_bottom = sw_forward_parameter[sw_forward_parameter >= 1]
-sw_reverse_parameter_cover = sw_reverse_parameter[sw_reverse_parameter > 1]
-sw_reverse_parameter_bottom = sw_reverse_parameter[sw_reverse_parameter <= 1]
+df_lstm = df['error_lstm']
+df_lstm_min = df['min_lstm']
+df_lstm_max = df['max_lstm']
 
-sw_forward_state_cover = sw_forward_state[:len(sw_forward_parameter_cover)]
-sw_forward_state_bottom = sw_forward_state[len(sw_forward_parameter_cover):]
-sw_reverse_state_cover = sw_reverse_state[:len(sw_reverse_parameter_cover)]
-sw_reverse_state_bottom = sw_reverse_state[len(sw_reverse_parameter_cover):]
+bl_list = list(df_bl.values)
 
-ss_swf = list(preds_sw['ssf_list'].values)
-ss_swr = list(preds_sw['ssr_list'].values)
-preds_dl_swf = list(preds_sw['preds_f_list'].values)
-preds_dl_swr = list(preds_sw['preds_r_list'].values)
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-for ssf,ssr in zip(ss_swf,ss_swr):
-    df_swf = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/sleep-wake_forward_{}.csv'.format(ssf))
-    df_swr = pd.read_csv('../model_test/data_hysteresis/sleep-wake_white/sleep-wake_reverse_{}.csv'.format(ssr))
+error_list_ac = list(df_ac.values)
+error_list_ac_min = list(df_ac_min.values)
+error_list_ac_max = list(df_ac_max.values)
 
-    initial_xf = df_swf['v'].iloc[0]
-    initial_bf = df_swf['D'].iloc[0]    
+error_list_dev = list(df_dev.values)
+error_list_dev_min = list(df_dev_min.values)
+error_list_dev_max = list(df_dev_max.values)
 
-    initial_xr = df_swr['v'].iloc[0]
-    initial_br = df_swr['D'].iloc[0]
+error_list_lstm = list(df_lstm.values)
+error_list_lstm_min = list(df_lstm_min.values)
+error_list_lstm_max = list(df_lstm_max.values)
 
-    initial_point_swf.append([initial_bf,initial_xf])
-    initial_point_swr.append([initial_br,initial_xr])
+line_ac, = subplt.plot(bl_list, error_list_ac, color='royalblue', linewidth=1.5, label='Degenerate Fingerprinting')
+subplt.fill_between(bl_list, error_list_ac_min, error_list_ac_max, color='royalblue', alpha=0.25, edgecolor='none')
+scatter_ac = subplt.scatter(bl_list, error_list_ac, color='royalblue', s=30, marker='^')
 
-subplt.scatter(sw_forward_parameter_bottom,sw_forward_state_bottom,c='crimson',s=0.5)
-subplt.scatter(sw_reverse_parameter_bottom,sw_reverse_state_bottom,c='royalblue',s=0.5)
-subplt.scatter(sw_forward_parameter_cover,sw_forward_state_cover,c='crimson',s=0.5)
-subplt.scatter(sw_reverse_parameter_cover,sw_reverse_state_cover,c='royalblue',s=0.5)
+line_dev, = subplt.plot(bl_list, error_list_dev, color='forestgreen', linewidth=1.5, label='DEV')
+subplt.fill_between(bl_list, error_list_dev_min, error_list_dev_max, color='forestgreen', alpha=0.25, edgecolor='none')
+scatter_dev = subplt.scatter(bl_list, error_list_dev, color='forestgreen', s=30, marker='s')
 
-subplt.axvline(ground_truth_swf,color='crimson',linestyle='--')
-subplt.axvline(ground_truth_swr,color='royalblue',linestyle='--')
+line_dl, = subplt.plot(bl_list, error_list_dl, color='crimson', linewidth=1.5, label='DL Algorithm')
+subplt.fill_between(bl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(bl_list, error_list_dl, color='crimson', s=30, marker='o',zorder=5)
 
-for i in range(len(ss_swf)):
+line_lstm, = subplt.plot(bl_list, error_list_lstm, color='blueviolet', linewidth=1.5, label='LSTM (ablation study)')
+subplt.fill_between(bl_list, error_list_lstm_min, error_list_lstm_max, color='blueviolet', alpha=0.25, edgecolor='none')
+scatter_lstm = subplt.scatter(bl_list, error_list_lstm, color='blueviolet', s=30, marker='D')
 
-    subplt.scatter(initial_point_swf[i][0],initial_point_swf[i][1], color='darkorange', s=24, marker='|', zorder=3)
-    subplt.scatter(preds_dl_swf[i],initial_point_swf[i][1], color='darkorange', s=12, marker='o', zorder=3)
-    subplt.plot([initial_point_swf[i][0],preds_dl_swf[i]],[initial_point_swf[i][1],initial_point_swf[i][1]], color='darkorange', linewidth=1, alpha=0.5)
+# 创建自定义图例
+legend_ac = mlines.Line2D([], [], color='royalblue', marker='^', markersize=5, label='Degenerate Fingerprinting', linestyle='-', markeredgewidth=1.5)
+legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-', markeredgewidth=1.5)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-', markeredgewidth=1.5)
+legend_lstm = mlines.Line2D([], [], color='blueviolet',  marker='D',markersize=5, label='LSTM (ablation study)', linestyle='-', markeredgewidth=1.5)
 
-    subplt.scatter(initial_point_swr[i][0],initial_point_swr[i][1], color='darkorange', s=24, marker='|', zorder=3)
-    subplt.scatter(preds_dl_swr[i],initial_point_swr[i][1], color='darkorange', s=12, marker='o', zorder=3)
-    subplt.plot([initial_point_swr[i][0],preds_dl_swr[i]],[initial_point_swr[i][1],initial_point_swr[i][1]], color='darkorange', linewidth=1, alpha=0.5)
-
-plt.xticks([0.1, ground_truth_swr, ground_truth_swf, 1.9],['0.1', '0.883', '1.153', '1.9'],fontsize=10)
-plt.xlabel(r'$D$',fontsize=14)
-plt.ylabel(r'$V_v$',fontsize=14)
-
+plt.xticks(bl_list,fontproperties=times_font)
+plt.ylim(-0.2,4.2)
+plt.yticks([0,2,4],fontproperties=times_font)
 ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
 
-ax.annotate('', xy=(0.5, -6.15), xytext=(0.3, -6.5), arrowprops=dict(color='crimson', arrowstyle='->'))
-ax.annotate('', xy=(1.6, 0.55), xytext=(1.8,0.85), arrowprops=dict(color='royalblue', arrowstyle='->'))
-ax.annotate('', xy=(1.25, -2.5), xytext=(1.225, -3.5), arrowprops=dict(color='crimson', arrowstyle='->'))
-ax.annotate('', xy=(0.775, -3), xytext=(0.8,-2), arrowprops=dict(color='royalblue', arrowstyle='->'))
+plt.ylabel('Mean relative error',font,labelpad=13)
+handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
+labels = [h.get_label() for h in handles]
 
-subplt.set_title('Sleep-Wake Fold/Fold Hysteresis Loop (2D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
-left_title = ax.text(0, 1.05,'a',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.set_title('May Harvesting Fold Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'a',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
-subplt = plt.subplot(1,2,2)
+subplt = plt.subplot(3,2,2)
 
-df_sbf = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_forward.csv')
-df_sbr = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/original series/sprott_b_reverse.csv')
-preds_sb = pd.read_csv('../results/sprott_b.csv')
+df = pandas.read_csv('../results/food_hopf/food_hopf_kl_nus.csv')
 
-initial_point_sbf = []
-initial_point_sbr = []
+df_kl = df['kl']
 
-ground_truth_sbf = 4.58982161367064
-ground_truth_sbr = 4.83495634709873
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-sb_forward_state = df_sbf['z']
-sb_forward_parameter = df_sbf['k']
-sb_reverse_state = df_sbr['z']
-sb_reverse_parameter = df_sbr['k']
+df_ac = df['error_ac']
+df_ac_min = df['min_ac']
+df_ac_max = df['max_ac']
 
-sb_forward_state = sb_forward_state[::10]
-sb_forward_parameter = sb_forward_parameter[::10]
-sb_reverse_state = sb_reverse_state[::10]
-sb_reverse_parameter = sb_reverse_parameter[::10]
+df_dev = df['error_dev']
+df_dev_min = df['min_dev']
+df_dev_max = df['max_dev']
 
-sb_forward_state = sb_forward_state.values
-sb_forward_parameter = sb_forward_parameter.values
-sb_reverse_state = sb_reverse_state.values
-sb_reverse_parameter = sb_reverse_parameter.values
+df_lstm = df['error_lstm']
+df_lstm_min = df['min_lstm']
+df_lstm_max = df['max_lstm']
 
-sb_forward_parameter_cover = sb_forward_parameter[sb_forward_parameter < 4.7]
-sb_forward_parameter_bottom = sb_forward_parameter[sb_forward_parameter >= 4.7]
-sb_reverse_parameter_cover = sb_reverse_parameter[sb_reverse_parameter > 4.7]
-sb_reverse_parameter_bottom = sb_reverse_parameter[sb_reverse_parameter <= 4.7]
+kl_list = list(df_kl.values)
 
-sb_forward_state_cover = sb_forward_state[:len(sb_forward_parameter_cover)]
-sb_forward_state_bottom = sb_forward_state[len(sb_forward_parameter_cover):]
-sb_reverse_state_cover = sb_reverse_state[:len(sb_reverse_parameter_cover)]
-sb_reverse_state_bottom = sb_reverse_state[len(sb_reverse_parameter_cover):]
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-ss_sbf = list(preds_sb['ssf_list'].values)
-ss_sbr = list(preds_sb['ssr_list'].values)
-preds_dl_sbf = list(preds_sb['preds_f_list'].values)
-preds_dl_sbr = list(preds_sb['preds_r_list'].values)
+error_list_ac = list(df_ac.values)
+error_list_ac_min = list(df_ac_min.values)
+error_list_ac_max = list(df_ac_max.values)
 
-for ssf,ssr in zip(ss_sbf,ss_sbr):
-    df_sbf = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/sprott_b_forward_{}.csv'.format(ssf))
-    df_sbr = pd.read_csv('../model_test/data_hysteresis/sprott_b_white/sprott_b_reverse_{}.csv'.format(ssr))
+error_list_dev = list(df_dev.values)
+error_list_dev_min = list(df_dev_min.values)
+error_list_dev_max = list(df_dev_max.values)
 
-    initial_xf = df_sbf['z'].iloc[0]
-    initial_bf = df_sbf['k'].iloc[0]    
+error_list_lstm = list(df_lstm.values)
+error_list_lstm_min = list(df_lstm_min.values)
+error_list_lstm_max = list(df_lstm_max.values)
 
-    initial_xr = df_sbr['z'].iloc[0]
-    initial_br = df_sbr['k'].iloc[0]
+line_ac, = subplt.plot(kl_list, error_list_ac, color='royalblue', linewidth=1.5, label='Degenerate Fingerprinting')
+subplt.fill_between(kl_list, error_list_ac_min, error_list_ac_max, color='royalblue', alpha=0.25, edgecolor='none')
+scatter_ac = subplt.scatter(kl_list, error_list_ac, color='royalblue', s=30, marker='^')
 
-    initial_point_sbf.append([initial_bf,initial_xf])
-    initial_point_sbr.append([initial_br,initial_xr])
+line_dev, = subplt.plot(kl_list, error_list_dev, color='forestgreen', linewidth=1.5, label='DEV')
+subplt.fill_between(kl_list, error_list_dev_min, error_list_dev_max, color='forestgreen', alpha=0.25, edgecolor='none')
+scatter_dev = subplt.scatter(kl_list, error_list_dev, color='forestgreen', s=30, marker='s')
 
-subplt.scatter(sb_forward_parameter_bottom,sb_forward_state_bottom,c='crimson',s=0.5)
-subplt.scatter(sb_reverse_parameter_bottom,sb_reverse_state_bottom,c='royalblue',s=0.5)
-subplt.scatter(sb_forward_parameter_cover,sb_forward_state_cover,c='crimson',s=0.5)
-subplt.scatter(sb_reverse_parameter_cover,sb_reverse_state_cover,c='royalblue',s=0.5)
+line_dl, = subplt.plot(kl_list, error_list_dl, color='crimson', linewidth=1.5, label='DL Algorithm')
+subplt.fill_between(kl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(kl_list, error_list_dl, color='crimson', s=30, marker='o',zorder=5)
 
-subplt.axvline(ground_truth_sbf,color='crimson',linestyle='--')
-subplt.axvline(ground_truth_sbr,color='royalblue',linestyle='--')
+line_lstm, = subplt.plot(kl_list, error_list_lstm, color='blueviolet', linewidth=1.5, label='LSTM (ablation study)')
+subplt.fill_between(kl_list, error_list_lstm_min, error_list_lstm_max, color='blueviolet', alpha=0.25, edgecolor='none')
+scatter_lstm = subplt.scatter(kl_list, error_list_lstm, color='blueviolet', s=30, marker='D')
 
-for i in range(len(ss_sbf)):
+# 创建自定义图例
+legend_ac = mlines.Line2D([], [], color='royalblue', marker='^', markersize=5, label='Degenerate Fingerprinting', linestyle='-', markeredgewidth=1.5)
+legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-', markeredgewidth=1.5)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-', markeredgewidth=1.5)
+legend_lstm = mlines.Line2D([], [], color='blueviolet',  marker='D',markersize=5, label='LSTM (ablation study)', linestyle='-', markeredgewidth=1.5)
 
-    subplt.scatter(initial_point_sbf[i][0],initial_point_sbf[i][1], color='darkorange', s=24, marker='|', zorder=3)
-    subplt.scatter(preds_dl_sbf[i],initial_point_sbf[i][1], color='darkorange', s=12, marker='o', zorder=3)
-    subplt.plot([initial_point_sbf[i][0],preds_dl_sbf[i]],[initial_point_sbf[i][1],initial_point_sbf[i][1]], color='darkorange', linewidth=1, alpha=0.5)
-
-    subplt.scatter(initial_point_sbr[i][0],initial_point_sbr[i][1], color='darkorange', s=24, marker='|', zorder=3)
-    subplt.scatter(preds_dl_sbr[i],initial_point_sbr[i][1], color='darkorange', s=12, marker='o', zorder=3)
-    subplt.plot([initial_point_sbr[i][0],preds_dl_sbr[i]],[initial_point_sbr[i][1],initial_point_sbr[i][1]], color='darkorange', linewidth=1, alpha=0.5)
-
-y_min, y_max = plt.ylim()
-
-plt.xticks([np.pi, 1.461*np.pi, 1.539*np.pi, 2*np.pi],['$\pi$', '', '', '$2\pi$'],fontsize=10)
-plt.text(1.41*3.14, y_min-0.8, '$1.461\pi$', fontsize=10, ha='center', va='center', color='black')
-plt.text(1.59*3.14, y_min-0.8, '$1.539\pi$', fontsize=10, ha='center', va='center', color='black')
-plt.xlabel(r'$k$',fontsize=14)
-plt.ylabel(r'$z$',fontsize=14)
-
+plt.xticks(kl_list,fontproperties=times_font)
+plt.ylim(-0.2,4.2)
+plt.yticks([0,2,4],fontproperties=times_font)
 ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
 
-ax.annotate('', xy=(3.768, -2), xytext=(3.454, -2.5), arrowprops=dict(color='crimson', arrowstyle='->'))
-ax.annotate('', xy=(5.652, -2), xytext=(5.966,-2.5), arrowprops=dict(color='royalblue', arrowstyle='->'))
+handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
+labels = [h.get_label() for h in handles]
 
-subplt.set_title('Sprott B Hopf/Hopf Hysteresis Bursting (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
-left_title = ax.text(0, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.set_title('Chaotic Food Chain Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
 
-plt.tight_layout()
+subplt = plt.subplot(3,2,3)
+
+df = pandas.read_csv('../results/cr_branch/cr_branch_al_nus.csv')
+
+df_al = df['al']
+
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+df_ac = df['error_ac']
+df_ac_min = df['min_ac']
+df_ac_max = df['max_ac']
+
+df_dev = df['error_dev']
+df_dev_min = df['min_dev']
+df_dev_max = df['max_dev']
+
+df_lstm = df['error_lstm']
+df_lstm_min = df['min_lstm']
+df_lstm_max = df['max_lstm']
+
+al_list = list(df_al.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+error_list_ac = list(df_ac.values)
+error_list_ac_min = list(df_ac_min.values)
+error_list_ac_max = list(df_ac_max.values)
+
+error_list_dev = list(df_dev.values)
+error_list_dev_min = list(df_dev_min.values)
+error_list_dev_max = list(df_dev_max.values)
+
+error_list_lstm = list(df_lstm.values)
+error_list_lstm_min = list(df_lstm_min.values)
+error_list_lstm_max = list(df_lstm_max.values)
+
+line_ac, = subplt.plot(al_list, error_list_ac, color='royalblue', linewidth=1.5, label='Degenerate Fingerprinting')
+subplt.fill_between(al_list, error_list_ac_min, error_list_ac_max, color='royalblue', alpha=0.25, edgecolor='none')
+scatter_ac = subplt.scatter(al_list, error_list_ac, color='royalblue', s=30, marker='^')
+
+line_dev, = subplt.plot(al_list, error_list_dev, color='forestgreen', linewidth=1.5, label='DEV')
+subplt.fill_between(al_list, error_list_dev_min, error_list_dev_max, color='forestgreen', alpha=0.25, edgecolor='none')
+scatter_dev = subplt.scatter(al_list, error_list_dev, color='forestgreen', s=30, marker='s')
+
+line_dl, = subplt.plot(al_list, error_list_dl, color='crimson', linewidth=1.5, label='DL Algorithm')
+subplt.fill_between(al_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(al_list, error_list_dl, color='crimson', s=30, marker='o',zorder=5)
+
+line_lstm, = subplt.plot(al_list, error_list_lstm, color='blueviolet', linewidth=1.5, label='LSTM (ablation study)')
+subplt.fill_between(al_list, error_list_lstm_min, error_list_lstm_max, color='blueviolet', alpha=0.25, edgecolor='none')
+scatter_lstm = subplt.scatter(al_list, error_list_lstm, color='blueviolet', s=30, marker='D')
+
+# 创建自定义图例
+legend_ac = mlines.Line2D([], [], color='royalblue', marker='^', markersize=5, label='Degenerate Fingerprinting', linestyle='-', markeredgewidth=1.5)
+legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-', markeredgewidth=1.5)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-', markeredgewidth=1.5)
+legend_lstm = mlines.Line2D([], [], color='blueviolet',  marker='D',markersize=5, label='LSTM (ablation study)', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(al_list,fontproperties=times_font)
+plt.ylim(-0.25,5.25)
+plt.yticks([0,2.5,5],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
+
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Consumer Resource Transcritical Model (2D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'c',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
+
+subplt = plt.subplot(3,2,4)
+
+df = pandas.read_csv('../results/global_fold/global_fold_ul_nus.csv')
+
+df_ul = df['ul']
+
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+df_ac = df['error_ac']
+df_ac_min = df['min_ac']
+df_ac_max = df['max_ac']
+
+df_dev = df['error_dev']
+df_dev_min = df['min_dev']
+df_dev_max = df['max_dev']
+
+df_lstm = df['error_lstm']
+df_lstm_min = df['min_lstm']
+df_lstm_max = df['max_lstm']
+
+ul_list = list(df_ul.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+error_list_ac = list(df_ac.values)
+error_list_ac_min = list(df_ac_min.values)
+error_list_ac_max = list(df_ac_max.values)
+
+error_list_dev = list(df_dev.values)
+error_list_dev_min = list(df_dev_min.values)
+error_list_dev_max = list(df_dev_max.values)
+
+error_list_lstm = list(df_lstm.values)
+error_list_lstm_min = list(df_lstm_min.values)
+error_list_lstm_max = list(df_lstm_max.values)
+
+line_ac, = subplt.plot(ul_list, error_list_ac, color='royalblue', linewidth=1.5, label='BB Method')
+subplt.fill_between(ul_list, error_list_ac_min, error_list_ac_max, color='royalblue', alpha=0.25, edgecolor='none')
+scatter_ac = subplt.scatter(ul_list, error_list_ac, color='royalblue', s=30, marker='v')
+
+line_dev, = subplt.plot(ul_list, error_list_dev, color='forestgreen', linewidth=1.5, label='DEV')
+subplt.fill_between(ul_list, error_list_dev_min, error_list_dev_max, color='forestgreen', alpha=0.25, edgecolor='none')
+scatter_dev = subplt.scatter(ul_list, error_list_dev, color='forestgreen', s=30, marker='s')
+
+line_dl, = subplt.plot(ul_list, error_list_dl, color='crimson', linewidth=1.5, label='DL Algorithm')
+subplt.fill_between(ul_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(ul_list, error_list_dl, color='crimson', s=30, marker='o',zorder=5)
+
+line_lstm, = subplt.plot(ul_list, error_list_lstm, color='blueviolet', linewidth=1.5, label='LSTM (ablation study)')
+subplt.fill_between(ul_list, error_list_lstm_min, error_list_lstm_max, color='blueviolet', alpha=0.25, edgecolor='none')
+scatter_lstm = subplt.scatter(ul_list, error_list_lstm, color='blueviolet', s=30, marker='D')
+
+# 创建自定义图例
+legend_ac = mlines.Line2D([], [], color='royalblue', marker='v', markersize=5, label='BB Method', linestyle='-', markeredgewidth=1.5)
+legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-', markeredgewidth=1.5)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-', markeredgewidth=1.5)
+legend_lstm = mlines.Line2D([], [], color='blueviolet',  marker='D',markersize=5, label='LSTM (ablation study)', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(ul_list,fontproperties=times_font)
+plt.ylim(-0.2,4.2)
+plt.yticks([0,2,4],fontproperties=times_font)
+plt.gca().invert_xaxis()
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
+
+handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Global Energy Balance Fold Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'d',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
+
+subplt = plt.subplot(3,2,5)
+
+df = pandas.read_csv('../results/MPT_hopf/MPT_hopf_ul_nus.csv')
+
+df_ul = df['ul']
+
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+df_ac = df['error_ac']
+df_ac_min = df['min_ac']
+df_ac_max = df['max_ac']
+
+df_dev = df['error_dev']
+df_dev_min = df['min_dev']
+df_dev_max = df['max_dev']
+
+df_lstm = df['error_lstm']
+df_lstm_min = df['min_lstm']
+df_lstm_max = df['max_lstm']
+
+ul_list = list(df_ul.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+error_list_ac = list(df_ac.values)
+error_list_ac_min = list(df_ac_min.values)
+error_list_ac_max = list(df_ac_max.values)
+
+error_list_dev = list(df_dev.values)
+error_list_dev_min = list(df_dev_min.values)
+error_list_dev_max = list(df_dev_max.values)
+
+error_list_lstm = list(df_lstm.values)
+error_list_lstm_min = list(df_lstm_min.values)
+error_list_lstm_max = list(df_lstm_max.values)
+
+line_ac, = subplt.plot(ul_list, error_list_ac, color='royalblue', linewidth=1.5, label='BB Method')
+subplt.fill_between(ul_list, error_list_ac_min, error_list_ac_max, color='royalblue', alpha=0.25, edgecolor='none')
+scatter_ac = subplt.scatter(ul_list, error_list_ac, color='royalblue', s=30, marker='v')
+
+line_dev, = subplt.plot(ul_list, error_list_dev, color='forestgreen', linewidth=1.5, label='DEV')
+subplt.fill_between(ul_list, error_list_dev_min, error_list_dev_max, color='forestgreen', alpha=0.25, edgecolor='none')
+scatter_dev = subplt.scatter(ul_list, error_list_dev, color='forestgreen', s=30, marker='s')
+
+line_dl, = subplt.plot(ul_list, error_list_dl, color='crimson', linewidth=1.5, label='DL Algorithm')
+subplt.fill_between(ul_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(ul_list, error_list_dl, color='crimson', s=30, marker='o',zorder=5)
+
+line_lstm, = subplt.plot(ul_list, error_list_lstm, color='blueviolet', linewidth=1.5, label='LSTM (ablation study)')
+subplt.fill_between(ul_list, error_list_lstm_min, error_list_lstm_max, color='blueviolet', alpha=0.25, edgecolor='none')
+scatter_lstm = subplt.scatter(ul_list, error_list_lstm, color='blueviolet', s=30, marker='D')
+
+# 创建自定义图例
+legend_ac = mlines.Line2D([], [], color='royalblue', marker='v', markersize=5, label='BB Method', linestyle='-', markeredgewidth=1.5)
+legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-', markeredgewidth=1.5)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-', markeredgewidth=1.5)
+legend_lstm = mlines.Line2D([], [], color='blueviolet',  marker='D',markersize=5, label='LSTM (ablation study)', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(ul_list,fontproperties=times_font)
+plt.ylim(-0.2,4.2)
+plt.yticks([0,2,4],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
+
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
+plt.ylabel('Mean relative error',font,labelpad=13)
+handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Middle Pleistocene Transition Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'e',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
+
+subplt = plt.subplot(3,2,6)
+
+df = pandas.read_csv('../results/amazon_branch/amazon_branch_pl_nus.csv')
+
+df_pl = df['pl']
+
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+df_ac = df['error_ac']
+df_ac_min = df['min_ac']
+df_ac_max = df['max_ac']
+
+df_dev = df['error_dev']
+df_dev_min = df['min_dev']
+df_dev_max = df['max_dev']
+
+df_lstm = df['error_lstm']
+df_lstm_min = df['min_lstm']
+df_lstm_max = df['max_lstm']
+
+pl_list = list(df_pl.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+error_list_ac = list(df_ac.values)
+error_list_ac_min = list(df_ac_min.values)
+error_list_ac_max = list(df_ac_max.values)
+
+error_list_dev = list(df_dev.values)
+error_list_dev_min = list(df_dev_min.values)
+error_list_dev_max = list(df_dev_max.values)
+
+error_list_lstm = list(df_lstm.values)
+error_list_lstm_min = list(df_lstm_min.values)
+error_list_lstm_max = list(df_lstm_max.values)
+
+line_ac, = subplt.plot(pl_list, error_list_ac, color='royalblue', linewidth=1.5, label='BB Method')
+subplt.fill_between(pl_list, error_list_ac_min, error_list_ac_max, color='royalblue', alpha=0.25, edgecolor='none')
+scatter_ac = subplt.scatter(pl_list, error_list_ac, color='royalblue', s=30, marker='v')
+
+line_dev, = subplt.plot(pl_list, error_list_dev, color='forestgreen', linewidth=1.5, label='DEV')
+subplt.fill_between(pl_list, error_list_dev_min, error_list_dev_max, color='forestgreen', alpha=0.25, edgecolor='none')
+scatter_dev = subplt.scatter(pl_list, error_list_dev, color='forestgreen', s=30, marker='s')
+
+line_dl, = subplt.plot(pl_list, error_list_dl, color='crimson', linewidth=1.5, label='DL Algorithm')
+subplt.fill_between(pl_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(pl_list, error_list_dl, color='crimson', s=30, marker='o',zorder=5)
+
+line_lstm, = subplt.plot(pl_list, error_list_lstm, color='blueviolet', linewidth=1.5, label='LSTM (ablation study)')
+subplt.fill_between(pl_list, error_list_lstm_min, error_list_lstm_max, color='blueviolet', alpha=0.25, edgecolor='none')
+scatter_lstm = subplt.scatter(pl_list, error_list_lstm, color='blueviolet', s=30, marker='D')
+
+# 创建自定义图例
+legend_ac = mlines.Line2D([], [], color='royalblue', marker='v', markersize=5, label='BB Method', linestyle='-', markeredgewidth=1.5)
+legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-', markeredgewidth=1.5)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-', markeredgewidth=1.5)
+legend_lstm = mlines.Line2D([], [], color='blueviolet',  marker='D',markersize=5, label='LSTM (ablation study)', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(pl_list,fontproperties=times_font)
+plt.ylim(-0.2,4.2)
+plt.yticks([0,2,4],fontproperties=times_font)
+plt.gca().invert_xaxis()
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+#act = plt.hlines(0,bl_list[0],bl_list[-1],linestyles='dashed',colors='black',label='Ground Truth',linewidth=1.5)
+
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
+handles = [legend_dl, legend_ac, legend_dev, legend_lstm]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Amazon Rainforest Dieback Transcritical Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'f',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':10})
+
+plt.subplots_adjust(top=0.96, bottom=0.075, left=0.055, right=0.99, hspace=0.32, wspace=0.08)
 plt.savefig('../figures/FIG4.pdf',format='pdf',dpi=600)
-
 

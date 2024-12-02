@@ -58,8 +58,8 @@ plt.yticks([0,0.3,0.6],fontproperties=times_font)
 ax = plt.gca()
 ax.tick_params(axis='both', labelsize=20)
 
-plt.xlabel('Initial parameter',font)
-plt.ylabel('Mean relative error',font)
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
+plt.ylabel('Mean relative error',font,labelpad=7)
 handles = [legend_dl_sup, legend_dl_sub]
 labels = [h.get_label() for h in handles]
 
