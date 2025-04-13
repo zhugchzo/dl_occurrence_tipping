@@ -14,8 +14,6 @@ current_dir = os.path.dirname(current_file_path)
 # Change the working directory to the directory of the current file
 os.chdir(current_dir)
 
-numtest = 50
-
 plt.figure(figsize=(12,9))
 
 font = {'family':'Times New Roman','weight':'normal','size': 18}

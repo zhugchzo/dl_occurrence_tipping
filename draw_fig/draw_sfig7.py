@@ -20,7 +20,7 @@ def custom_formatter(x, pos):
     else:
         return f"{x:g}"
 
-font_title = {'family':'Microsoft YaHei','weight':'bold','size': 15}
+font_title = {'family':'Arial','weight':'bold','size': 15}
 font_axis = {'family':'Times New Roman','weight':'normal','size': 14}
 
 df_20 = pandas.read_csv('../results/thermoacoustic_20_hopf.csv')
@@ -134,7 +134,7 @@ for i in range(len(preds_dev_60)):
 
 title = ['A1','A2','A3','B1','B2','B3','C1','C2','C3']
 
-fig, axs = plt.subplots(3, 3, figsize=(12, 9))
+fig, axs = plt.subplots(3, 3, figsize=(12, 12))
 
 for p in range(3):
 
@@ -410,7 +410,7 @@ for p in range(3):
     subplt.set_xlabel('Voltage (60mV/s)',font_axis)
     subplt.set_ylabel('Acoustic pressure (Pa)',font_axis)
 
-plt.subplots_adjust(top=0.92, bottom=0.06, left=0.07, right=0.99, hspace=0.32, wspace=0.3)
+plt.subplots_adjust(top=0.92, bottom=0.06, left=0.07, right=0.99, hspace=0.3, wspace=0.3)
 
 legend_ac = mlines.Line2D([], [], color='royalblue', marker='^', markersize=5, label='Degenerate Fingerprinting', linestyle='-')
 legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-')

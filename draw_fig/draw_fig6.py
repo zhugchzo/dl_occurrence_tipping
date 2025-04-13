@@ -20,25 +20,32 @@ def custom_formatter(x, pos):
     else:
         return f"{x:g}"
 
-font_title = {'family':'Microsoft YaHei','weight':'bold','size': 15}
+font_title = {'family':'Arial','weight':'bold','size': 15}
 font_axis = {'family':'Times New Roman','weight':'normal','size': 14}
 
 df_fold = pandas.read_csv('../results/microcosm_fold.csv')
 df_hopf = pandas.read_csv('../results/thermoacoustic_40_hopf.csv')
+df_afold = pandas.read_csv('../results/AMOC_fold.csv')
 
 sample_start_fold = [0, 500, 1000, 5000, 5500, 6000, 6500]
 sample_start_hopf = [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6]
+sample_start_afold = [0, 200, 400, 600, 800, 1000]
 
 ground_truth_fold = 1091
 ground_truth_hopf = 1.76
+ground_truth_afold = 1758
 
 initial_point_fold = []
 initial_point_hopf = []
+initial_point_afold = []
 
 end_point_hopf = []
 
 index_ac_hopf =[]
 index_dev_hopf =[]
+
+index_ac_afold =[]
+index_dev_afold =[]
 
 for ss in sample_start_fold:
     df_sims = pandas.read_csv('../empirical_test/data_nus/microcosm_fold/{}/microcosm_fold_interpolate.csv'.format(ss))
@@ -56,6 +63,13 @@ for ss in sample_start_hopf:
     initial_point_hopf.append([initial_b,initial_x])
     end_point_hopf.append(end_b)
 
+for ss in sample_start_afold:
+    df_sims = pandas.read_csv('../empirical_test/data_nus/AMOC_fold/{}/AMOC_fold_interpolate.csv'.format(ss))
+    initial_x = df_sims['x'].iloc[0]
+    initial_b = df_sims['b'].iloc[0]    
+
+    initial_point_afold.append([initial_b,initial_x])
+
 # fold
 ss_fold = df_fold['ss_list'].values
 preds_dl_fold = df_fold['preds_dl_list'].values
@@ -66,7 +80,7 @@ preds_dl_fold  = list(preds_dl_fold)
 preds_ac_fold  = list(preds_ac_fold)
 preds_dev_fold  = list(preds_dev_fold)
 
-# hopf 60mv
+# hopf 40mv
 ss_hopf = df_hopf['ss_list'].values
 preds_dl_hopf = df_hopf['preds_dl_list'].values
 preds_ac_hopf = df_hopf['preds_ac_list'].values
@@ -76,6 +90,16 @@ preds_dl_hopf  = list(preds_dl_hopf)
 preds_ac_hopf  = list(preds_ac_hopf)
 preds_dev_hopf  = list(preds_dev_hopf)
 
+# AMOC fold
+ss_afold = df_afold['ss_list'].values
+preds_dl_afold = df_afold['preds_dl_list'].values
+preds_ac_afold = df_afold['preds_ac_list'].values
+preds_dev_afold = df_afold['preds_dev_list'].values
+
+preds_dl_afold  = list(preds_dl_afold)
+preds_ac_afold  = list(preds_ac_afold)
+preds_dev_afold  = list(preds_dev_afold)
+
 for i in range(len(preds_ac_hopf)):
     if preds_ac_hopf[i] > end_point_hopf[i] and preds_ac_hopf[i] < 2.5:
         index_ac_hopf.append(i)
@@ -84,9 +108,17 @@ for i in range(len(preds_dev_hopf)):
     if preds_dev_hopf[i] > end_point_hopf[i] and preds_dev_hopf[i] < 2.5:
         index_dev_hopf.append(i)
 
-title = ['A1','A2','A3','B1','B2','B3']
+for i in range(len(preds_ac_afold)):
+    if 0 < preds_ac_afold[i] < 2200:
+        index_ac_afold.append(i)
 
-fig, axs = plt.subplots(2, 3, figsize=(12, 8))
+for i in range(len(preds_dev_afold)):
+    if 0 < preds_dev_afold[i] < 2200:
+        index_dev_afold.append(i)
+
+title = ['A1','A2','A3','B1','B2','B3','C1','C2','C3']
+
+fig, axs = plt.subplots(3, 3, figsize=(12, 12))
 
 for p in range(3):
 
@@ -248,16 +280,75 @@ for p in range(3):
     subplt.set_xlabel('Voltage (V)',font_axis,labelpad=2)
     subplt.set_ylabel('Acoustic pressure (Pa)',font_axis,labelpad=6)
 
-plt.subplots_adjust(top=0.9, bottom=0.07, left=0.07, right=0.99, hspace=0.4, wspace=0.3)
+for p in range(3):
+
+    ss = ss_afold
+    preds_dl = preds_dl_afold
+    preds_ac = preds_ac_afold
+    preds_dev = preds_dev_afold
+    initial_point = initial_point_afold
+    ground_truth = ground_truth_afold
+
+    index_ac = index_ac_afold
+    index_dev = index_dev_afold
+
+    csv = pandas.read_csv('../empirical_test/empirical_data/AMOC_data.csv')
+
+    dataset = csv.to_numpy()
+
+    x = dataset[:,0]
+    y = dataset[:,1]
+
+    subplt = axs[2,p]
+
+    subplt.scatter(x,y,c='black',s=0.5)
+    subplt.axvline(ground_truth,color='slategray',linestyle='--',label='Ground Truth')
+
+    if p == 0:
+        for i in range(len(ss)):
+            subplt.scatter(initial_point[i][0],initial_point[i][1], color='crimson', s=40, marker='|', zorder=3)
+            subplt.scatter(preds_dl[i],initial_point[i][1], color='crimson', s=20, marker='o', zorder=3)
+            subplt.plot([initial_point[i][0],preds_dl[i]],[initial_point[i][1],initial_point[i][1]], color='crimson', linewidth=1.5, alpha=0.5, label='DL Algorithm')
+
+    if p == 1:
+
+        ss_ac = [ss[i] for i in index_ac]
+        initial_point_ac = [initial_point[i] for i in index_ac]
+        preds_ac_clean = [preds_ac[i] for i in index_ac]
+
+        for i in range(len(ss_ac)):
+            subplt.scatter(initial_point_ac[i][0],initial_point_ac[i][1], color='darkorange', s=40, marker='|', zorder=3)
+            subplt.scatter(preds_ac_clean[i],initial_point_ac[i][1], color='darkorange', s=20, marker='v', zorder=3)
+            subplt.plot([initial_point_ac[i][0],preds_ac_clean[i]],[initial_point_ac[i][1],initial_point_ac[i][1]], color='darkorange', linewidth=1.5, alpha=0.5, label='BB Method')
+
+    if p == 2:
+
+        ss_dev = [ss[i] for i in index_dev]
+        initial_point_dev = [initial_point[i] for i in index_dev]
+        preds_dev_clean = [preds_dev[i] for i in index_dev]
+
+        for i in range(len(ss_dev)):
+            subplt.scatter(initial_point_dev[i][0],initial_point_dev[i][1], color='forestgreen', s=40, marker='|', zorder=3)
+            subplt.scatter(preds_dev_clean[i],initial_point_dev[i][1], color='forestgreen', s=20, marker='s', zorder=3)
+            subplt.plot([initial_point_dev[i][0],preds_dev_clean[i]],[initial_point_dev[i][1],initial_point_dev[i][1]], color='forestgreen', linewidth=1.5, alpha=0.5, label='DEV')
+
+    subplt.set_title(title[6+p],loc='left',fontdict=font_title)
+    subplt.set_xticks([1,1000,ground_truth])
+    subplt.tick_params(axis='both', labelsize=10)
+    subplt.set_xlabel('Model time (year)',font_axis,labelpad=2)
+    subplt.set_ylabel('Volume transport (Sv)',font_axis,labelpad=12)
+
+plt.subplots_adjust(top=0.92, bottom=0.06, left=0.07, right=0.99, hspace=0.3, wspace=0.3)
 
 legend_ac = mlines.Line2D([], [], color='royalblue', marker='^', markersize=5, label='Degenerate Fingerprinting', linestyle='-')
+legend_bb = mlines.Line2D([], [], color='darkorange', marker='v', markersize=5, label='BB Method', linestyle='-')
 legend_dev = mlines.Line2D([], [], color='forestgreen', marker='s', markersize=5, label='DEV', linestyle='-')
 legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='DL Algorithm', linestyle='-')
 legend_gt = mlines.Line2D([], [], color='slategray', label='Ground Truth', linestyle='--')
 
-handles = [legend_dl, legend_ac, legend_dev, legend_gt]
+handles = [legend_dl, legend_ac, legend_bb, legend_dev, legend_gt]
 labels = [h.get_label() for h in handles]
 
-fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,1), ncol=4, frameon=False, fontsize=15)
+fig.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5,1), ncol=5, frameon=False, fontsize=15)
 
 plt.savefig('../figures/FIG6.pdf',format='pdf',dpi=600)
