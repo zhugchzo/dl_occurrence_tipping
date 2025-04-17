@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 within a new virtual environment.
 
-The bifurcation continuation software AUTO-07P is required. Installation instructions are provided at http://www.macs.hw.ac.uk/~gabriel/auto07/auto.html
+The bifurcation continuation software AUTO-07P is required. Installation instructions are provided at [https://github.com/auto-07p/auto-07p](https://github.com/auto-07p/auto-07p)
 
 # Directories
 
