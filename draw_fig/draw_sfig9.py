@@ -47,10 +47,10 @@ scatter_dl_sup = plt.scatter(rl_list, error_list_dl_sup, color='blueviolet', s=1
 
 line_dl_sub, = plt.plot(rl_list, error_list_dl_sub, color='darkorange', linewidth=2, label='Subcritical DL Model')
 plt.fill_between(rl_list, error_list_dl_sub_min, error_list_dl_sub_max, color='darkorange', alpha=0.25, edgecolor='none')
-scatter_dl_sub = plt.scatter(rl_list, error_list_dl_sub, color='darkorange', s=100, marker='x')
+scatter_dl_sub = plt.scatter(rl_list, error_list_dl_sub, color='darkorange', s=100, marker='^')
 
 legend_dl_sup = mlines.Line2D([], [], color='blueviolet',  marker='o',markersize=8, label='Supercritical DL Model', linestyle='-', markeredgewidth=2)
-legend_dl_sub = mlines.Line2D([], [], color='darkorange',  marker='x',markersize=8, label='Subcritical DL Model', linestyle='-', markeredgewidth=2)
+legend_dl_sub = mlines.Line2D([], [], color='darkorange',  marker='^',markersize=8, label='Subcritical DL Model', linestyle='-', markeredgewidth=2)
 
 plt.xticks(rl_list,fontproperties=times_font)
 plt.ylim(-0.03,0.63)
