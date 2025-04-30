@@ -4,71 +4,215 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import matplotlib.lines as mlines
 
-fig, ax = plt.subplots(figsize=(12,6))
+plt.figure(figsize=(12,9))
 
-font = {'family':'Times New Roman','weight':'normal','size': 25}
+font = {'family':'Times New Roman','weight':'normal','size': 18}
 times_font = fm.FontProperties(family='Times New Roman', style='normal')
 
-df_fold = pandas.read_csv('../results/may_fold/may_fold_bl_nus.csv')
-df_foldnt = pandas.read_csv('../results/fold_network_bl_nus_CNN30.csv')
+subplt = plt.subplot(3,2,1)
 
-df_fold_bl = df_fold['bl']
-df_foldnt_bl = df_foldnt['bl']
+df = pandas.read_csv('../results/informer/may_fold_bl_nus.csv')
+df_bl_nus = df['bl']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
 
-df_dl_fold = df_fold['error_dl']
-df_dl_fold_min = df_fold['min_dl']
-df_dl_fold_max = df_fold['max_dl']
+dr_list = list(df_bl_nus.values)
 
-df_dl_foldnt = df_foldnt['error_dl']
-df_dl_foldnt_min = df_foldnt['min_dl']
-df_dl_foldnt_max = df_foldnt['max_dl']
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
 
-fold_bl_list = list(df_fold_bl.values)
-foldnt_bl_list = list(df_foldnt_bl.values)
+line_dl, = subplt.plot(dr_list, error_list_dl, color='crimson', linewidth=1.5)
+subplt.fill_between(dr_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(dr_list, error_list_dl, color='crimson', s=30, marker='o')
 
-error_list_dl_fold = list(df_dl_fold.values)
-error_list_dl_fold_min = list(df_dl_fold_min.values)
-error_list_dl_fold_max = list(df_dl_fold_max.values)
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Informer', linestyle='-', markeredgewidth=1.5)
 
-error_list_dl_foldnt = list(df_dl_foldnt.values)
-error_list_dl_foldnt_min = list(df_dl_foldnt_min.values)
-error_list_dl_foldnt_max = list(df_dl_foldnt_max.values)
+plt.xticks(dr_list,fontproperties=times_font)
+plt.ylim(-0.02,0.42)
+plt.yticks([0,0.2,0.4],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
 
-ax.plot(fold_bl_list, error_list_dl_fold, color='crimson', linewidth=2)
-ax.fill_between(fold_bl_list, error_list_dl_fold_min, error_list_dl_fold_max, color='crimson', alpha=0.25, edgecolor='none')
-ax.scatter(fold_bl_list, error_list_dl_fold, color='crimson', s=100, marker='o')
-
-ax.plot(fold_bl_list, error_list_dl_foldnt, color='royalblue', linewidth=2)
-ax.fill_between(fold_bl_list, error_list_dl_foldnt_min, error_list_dl_foldnt_max, color='royalblue', alpha=0.25, edgecolor='none')
-ax.scatter(fold_bl_list, error_list_dl_foldnt, color='royalblue', s=100, marker='v')
-
-legend_dl_fold = mlines.Line2D([], [], color='crimson',  marker='o',markersize=8, label='Low-dimensional Fold Model', linestyle='-', markeredgewidth=2)
-legend_dl_foldnt = mlines.Line2D([], [], color='royalblue',  marker='v',markersize=8, label=r'High-dimensional Fold Networked Model ($d>2m$)', linestyle='-', markeredgewidth=2)
-
-ax.set_xticks(fold_bl_list)
-ax.set_xticklabels(fold_bl_list, fontproperties=times_font)
-ax.set_ylim(-0.1,2.1)
-ax.set_yticks([0,1,2])
-ax.set_yticklabels([0,1,2],fontproperties=times_font)
-ax.tick_params(axis='x', colors='crimson', labelsize=20)
-ax.tick_params(axis='y', labelsize=20)
-
-ax2 = ax.twiny()
-ax2.set_xlim(ax.get_xlim())
-ax2.set_xticks(fold_bl_list)
-ax2.xaxis.set_ticks_position('bottom')
-ax2.xaxis.set_label_position('bottom')
-ax2.spines['bottom'].set_position(('outward', 30))
-ax2.spines['top'].set_visible(False)
-ax2.set_xticklabels(['1.0','1.1','1.2','1.3','1.4','1.5','1.6','1.7','1.8','1.9','2.0'], fontproperties=times_font)
-ax2.tick_params(axis='x', colors='royalblue', labelsize=20)
-
-ax.set_xlabel('Initial value of bifurcation parameter',font,labelpad=40)
-ax.set_ylabel('Mean relative error',font,labelpad=7)
-handles = [legend_dl_fold, legend_dl_foldnt]
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl]
 labels = [h.get_label() for h in handles]
 
-plt.legend(handles=handles,labels=labels,loc=2,prop={'size':20})
+subplt.set_title('May Harvesting Fold Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'a',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':15},frameon=False)
 
-plt.subplots_adjust(top=0.98, bottom=0.21, left=0.08, right=0.99)
+subplt = plt.subplot(3,2,2)
+
+df = pandas.read_csv('../results/informer/food_hopf_bl_nus.csv')
+df_bl_nus = df['kl']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+dr_list = list(df_bl_nus.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+line_dl, = subplt.plot(dr_list, error_list_dl, color='crimson', linewidth=1.5)
+subplt.fill_between(dr_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(dr_list, error_list_dl, color='crimson', s=30, marker='o')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Informer', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(dr_list,fontproperties=times_font)
+plt.ylim(-0.02,0.42)
+plt.yticks([0,0.2,0.4],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+
+handles = [legend_dl]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Chaotic Food Chain Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'b',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':15},frameon=False)
+
+subplt = plt.subplot(3,2,3)
+
+df = pandas.read_csv('../results/informer/cr_branch_bl_nus.csv')
+df_bl_nus = df['al']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+dr_list = list(df_bl_nus.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+line_dl, = subplt.plot(dr_list, error_list_dl, color='crimson', linewidth=1.5)
+subplt.fill_between(dr_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(dr_list, error_list_dl, color='crimson', s=30, marker='o')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Informer', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(dr_list,fontproperties=times_font)
+plt.ylim(-0.02,0.42)
+plt.yticks([0,0.2,0.4],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Consumer Resource Transcritical Model (2D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'c',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':15},frameon=False)
+
+subplt = plt.subplot(3,2,4)
+
+df = pandas.read_csv('../results/informer/global_fold_bl_nus.csv')
+df_bl_nus = df['ul']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+dr_list = list(df_bl_nus.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+line_dl, = subplt.plot(dr_list, error_list_dl, color='crimson', linewidth=1.5)
+subplt.fill_between(dr_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(dr_list, error_list_dl, color='crimson', s=30, marker='o')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Informer', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(dr_list,fontproperties=times_font)
+plt.ylim(-0.03,0.63)
+plt.yticks([0,0.3,0.6],fontproperties=times_font)
+plt.gca().invert_xaxis()
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+
+handles = [legend_dl]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Global Energy Balance Fold Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'d',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':15},frameon=False)
+
+subplt = plt.subplot(3,2,5)
+
+df = pandas.read_csv('../results/informer/MPT_hopf_bl_nus.csv')
+df_bl_nus = df['ul']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+dr_list = list(df_bl_nus.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+line_dl, = subplt.plot(dr_list, error_list_dl, color='crimson', linewidth=1.5)
+subplt.fill_between(dr_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(dr_list, error_list_dl, color='crimson', s=30, marker='o')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Informer', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(dr_list,fontproperties=times_font)
+plt.ylim(-0.02,0.42)
+plt.yticks([0,0.2,0.4],fontproperties=times_font)
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
+plt.ylabel('Mean relative error',font)
+handles = [legend_dl]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Middle Pleistocene Transition Hopf Model (3D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'e',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=2,prop={'size':15},frameon=False)
+
+subplt = plt.subplot(3,2,6)
+
+df = pandas.read_csv('../results/informer/amazon_branch_bl_nus.csv')
+df_bl_nus = df['pl']
+df_dl = df['error_dl']
+df_dl_min = df['min_dl']
+df_dl_max = df['max_dl']
+
+dr_list = list(df_bl_nus.values)
+
+error_list_dl = list(df_dl.values)
+error_list_dl_min = list(df_dl_min.values)
+error_list_dl_max = list(df_dl_max.values)
+
+line_dl, = subplt.plot(dr_list, error_list_dl, color='crimson', linewidth=1.5)
+subplt.fill_between(dr_list, error_list_dl_min, error_list_dl_max, color='crimson', alpha=0.25, edgecolor='none')
+scatter_dl = subplt.scatter(dr_list, error_list_dl, color='crimson', s=30, marker='o')
+
+legend_dl = mlines.Line2D([], [], color='crimson',  marker='o',markersize=5, label='Informer', linestyle='-', markeredgewidth=1.5)
+
+plt.xticks(dr_list,fontproperties=times_font)
+plt.ylim(-0.03,0.63)
+plt.yticks([0,0.3,0.6],fontproperties=times_font)
+plt.gca().invert_xaxis()
+ax = plt.gca()
+ax.tick_params(axis='both', labelsize=15)
+
+plt.xlabel('Initial value of bifurcation parameter',font,labelpad=7)
+handles = [legend_dl]
+labels = [h.get_label() for h in handles]
+
+subplt.set_title('Amazon Rainforest Dieback Transcritical Model (1D)',fontdict={'family':'Times New Roman','size':14,'weight':'bold'})
+left_title = ax.text(0.02, 1.05,'f',ha='left', transform=ax.transAxes,fontdict={'family':'Times New Roman','size':18,'weight':'bold'})
+subplt.legend(handles=handles,labels=labels,loc=1,prop={'size':15},frameon=False)
+
+plt.subplots_adjust(top=0.96, bottom=0.075, left=0.055, right=0.99, hspace=0.32, wspace=0.08)
 plt.savefig('../figures/SFIG18.pdf',format='pdf',dpi=600)

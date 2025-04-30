@@ -10,7 +10,7 @@ font = {'family':'Times New Roman','weight':'normal','size': 25}
 times_font = fm.FontProperties(family='Times New Roman', style='normal')
 
 df_fold = pandas.read_csv('../results/may_fold/may_fold_bl_nus.csv')
-df_foldnt = pandas.read_csv('../results/fold_network_bl_nus.csv')
+df_foldnt = pandas.read_csv('../results/fold_network_bl_nus_CNN30.csv')
 
 df_fold_bl = df_fold['bl']
 df_foldnt_bl = df_foldnt['bl']
@@ -40,16 +40,16 @@ ax.scatter(fold_bl_list, error_list_dl_fold, color='crimson', s=100, marker='o')
 
 ax.plot(fold_bl_list, error_list_dl_foldnt, color='royalblue', linewidth=2)
 ax.fill_between(fold_bl_list, error_list_dl_foldnt_min, error_list_dl_foldnt_max, color='royalblue', alpha=0.25, edgecolor='none')
-ax.scatter(fold_bl_list, error_list_dl_foldnt, color='royalblue', s=100, marker='^')
+ax.scatter(fold_bl_list, error_list_dl_foldnt, color='royalblue', s=100, marker='v')
 
 legend_dl_fold = mlines.Line2D([], [], color='crimson',  marker='o',markersize=8, label='Low-dimensional Fold Model', linestyle='-', markeredgewidth=2)
-legend_dl_foldnt = mlines.Line2D([], [], color='royalblue',  marker='^',markersize=8, label=r'High-dimensional Fold Networked Model ($d<2m$)', linestyle='-', markeredgewidth=2)
+legend_dl_foldnt = mlines.Line2D([], [], color='royalblue',  marker='v',markersize=8, label='High-dimensional Fold Networked Model', linestyle='-', markeredgewidth=2)
 
 ax.set_xticks(fold_bl_list)
 ax.set_xticklabels(fold_bl_list, fontproperties=times_font)
-ax.set_ylim(-0.07,1.47)
-ax.set_yticks([0,0.7,1.4])
-ax.set_yticklabels([0,0.7,1.4],fontproperties=times_font)
+ax.set_ylim(-0.1,2.1)
+ax.set_yticks([0,1,2])
+ax.set_yticklabels([0,1,2],fontproperties=times_font)
 ax.tick_params(axis='x', colors='crimson', labelsize=20)
 ax.tick_params(axis='y', labelsize=20)
 
